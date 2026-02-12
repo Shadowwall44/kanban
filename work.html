@@ -449,6 +449,12 @@
                 <span class="fuel-pct" id="fuelWeeklyPct">--%</span>
                 <span class="fuel-reset" id="fuelWeeklyReset"></span>
             </div>
+            <div class="fuel-item">
+                <span class="fuel-label">💎 Sonnet</span>
+                <div class="fuel-bar-wrap"><div class="fuel-bar-fill" id="fuelSonnetBar" style="width:0%"></div></div>
+                <span class="fuel-pct" id="fuelSonnetPct">--%</span>
+                <span class="fuel-reset" id="fuelSonnetReset"></span>
+            </div>
             <span class="fuel-model ok" id="fuelModel">🧠 --</span>
             <span class="fuel-updated" id="fuelUpdated">⏱ --</span>
         </div>
@@ -572,7 +578,7 @@
             { id: 'd12', text: '✅ Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
             { id: 'd13', text: '✅ YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
         ];
-        // SYNC_TIMESTAMP: 2026-02-12T22:10:00Z
+        // SYNC_TIMESTAMP: 2026-02-12T22:17:00Z
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -963,6 +969,19 @@
                 wTxt.textContent = wPct + '%';
                 wTxt.className = 'fuel-pct ' + fuelTextColor(wPct);
                 wReset.textContent = data.weekly.resetAt ? ('↻ ' + data.weekly.resetAt) : '';
+
+                // Sonnet bar
+                if (data.sonnet) {
+                    const snPct = data.sonnet.pct || 0;
+                    const snBar = document.getElementById('fuelSonnetBar');
+                    const snTxt = document.getElementById('fuelSonnetPct');
+                    const snReset = document.getElementById('fuelSonnetReset');
+                    snBar.style.width = snPct + '%';
+                    snBar.className = 'fuel-bar-fill ' + fuelColor(snPct);
+                    snTxt.textContent = snPct + '%';
+                    snTxt.className = 'fuel-pct ' + fuelTextColor(snPct);
+                    snReset.textContent = data.sonnet.resetAt ? ('↻ ' + data.sonnet.resetAt) : '';
+                }
 
                 // Model indicator
                 const modelEl = document.getElementById('fuelModel');

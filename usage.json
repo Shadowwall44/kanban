@@ -1,19 +1,24 @@
 {
   "session": {
     "pct": 35,
-    "resetIn": "~3hr",
-    "note": "Post-compaction estimate"
+    "resetIn": "3hr 43min",
+    "note": "Current session"
   },
   "weekly": {
-    "pct": 80,
-    "resetAt": "Mon 1PM ET",
-    "note": "Resets Monday"
+    "pct": 81,
+    "resetAt": "Mon 12:59 PM",
+    "note": "All models"
+  },
+  "sonnet": {
+    "pct": 0,
+    "resetAt": "Wed 11:59 AM",
+    "note": "Sonnet only"
   },
   "model": {
     "active": "Opus 4.6",
     "status": "ok",
     "fallback": null
   },
-  "updatedAt": "2026-02-12T17:08:00-05:00",
+  "updatedAt": "2026-02-12T17:17:00-05:00",
   "updatedBy": "ChetGPT"
 }
