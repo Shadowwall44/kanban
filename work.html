@@ -712,7 +712,8 @@
             { id: 'c13', text: '🧠 Deeper brain dump — who Aviel really is, patterns, flaws', column: 'inProgress', tag: 'setup', source: 'chet', priority: 'high' },
 
             // === BACKLOG ===
-            { id: 'ext1', text: '📊 Extracting material costs from 159 vendor invoices (17/159 processing...)', column: 'chetActive', tag: 'MIS', source: 'chet' },
+            { id: 'ext1', text: '📊 Extracting material costs — Lindenmeyr ✅ 28 items | Ddpmsc running (71 PDFs)', column: 'chetActive', tag: 'MIS', source: 'chet' },
+            { id: 'kanban1', text: '🔧 Kanban board: fuel gauge + filters + changelog + timestamps', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T22:49:00Z' },
             { id: 'mis3', text: 'MIS Phase 3: Scrape 8 NDF products (Codex 5.3)', column: 'backlog', tag: 'MIS', source: 'chet' },
             { id: 'mis4', text: 'MIS Phase 4: Build pricing engine (costs + NDF 3-tier)', column: 'backlog', tag: 'MIS', source: 'chet' },
             { id: 'mis5', text: 'MIS Phase 5: Inventory + FIFO lot tracking', column: 'backlog', tag: 'MIS', source: 'chet' },
@@ -746,7 +747,7 @@
             { id: 'd12', text: '✅ Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
             { id: 'd13', text: '✅ YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
         ];
-        // SYNC_TIMESTAMP: 2026-02-12T22:49:00Z
+        // SYNC_TIMESTAMP: 2026-02-12T22:52:00Z
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -755,6 +756,7 @@
             renderTasks();
             setupEventListeners();
             updateSyncTime();
+            runChangelog();
         });
 
         function syncTasks() {
@@ -1137,7 +1139,7 @@
             }, { offset: Number.NEGATIVE_INFINITY }).element;
         }
         // === CHANGELOG DIFF ===
-        (function() {
+        function runChangelog() {
             const SNAP_KEY = 'kanban_work_snapshot';
             const COL_LABELS = {
                 backlog: '📋 Backlog',
@@ -1219,7 +1221,7 @@
 
             // Save current snapshot for next visit
             localStorage.setItem(SNAP_KEY, JSON.stringify(newSnap));
-        })();
+        }
 
         // === FUEL GAUGE ===
         (function() {
