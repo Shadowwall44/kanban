@@ -127,6 +127,51 @@
             padding: 3px 8px;
             border-radius: 10px;
         }
+        .column-header.toggleable {
+            cursor: pointer;
+            user-select: none;
+        }
+        .column-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+            min-width: 0;
+        }
+        .column-subtitle {
+            font-size: 11px;
+            color: var(--subtle);
+        }
+        .chevron {
+            font-size: 11px;
+            color: var(--subtle);
+            width: 12px;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+        .column-body {
+            overflow: hidden;
+            transition: max-height 0.25s ease, opacity 0.25s ease, margin-top 0.25s ease;
+            max-height: 1600px;
+            opacity: 1;
+        }
+        .column-body.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+            pointer-events: none;
+        }
+        .toggle-link {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--muted);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            text-align: left;
+        }
+        .toggle-link:hover { color: var(--text); }
 
         .backlog .column-icon { background: #f59e0b; }
         .this-week .column-icon { background: #38bdf8; }
@@ -254,12 +299,15 @@
 
         <div class="board">
             <div class="column backlog" data-column="backlog">
-                <div class="column-header">
+                <div class="column-header toggleable" id="backlog-toggle" role="button" tabindex="0" aria-expanded="false">
+                    <span class="chevron" id="backlog-chevron">▶</span>
                     <div class="column-icon"></div>
-                    <span class="column-title">📋 Backlog</span>
+                    <span class="column-title" id="backlog-title">📋 Backlog (0)</span>
                     <span class="task-count" id="backlog-count">0</span>
                 </div>
-                <div class="tasks" id="backlog"></div>
+                <div class="column-body collapsed" id="backlog-body">
+                    <div class="tasks" id="backlog"></div>
+                </div>
             </div>
 
             <div class="column this-week" data-column="thisWeek">
@@ -278,15 +326,20 @@
                     <span class="task-count" id="inProgress-count">0</span>
                 </div>
                 <div class="tasks" id="inProgress"></div>
+                <div id="inProgress-more-wrap"></div>
             </div>
 
             <div class="column done" data-column="done">
                 <div class="column-header">
                     <div class="column-icon"></div>
-                    <span class="column-title">✅ Done</span>
+                    <div class="column-title-group">
+                        <span class="column-title">✅ Today's Wins</span>
+                        <span class="column-subtitle" id="done-subtitle">0 total all-time</span>
+                    </div>
                     <span class="task-count" id="done-count">0</span>
                 </div>
                 <div class="tasks" id="done"></div>
+                <div id="done-view-all-wrap"></div>
             </div>
         </div>
     </div>
@@ -296,6 +349,11 @@
         const COLUMNS = ['backlog', 'thisWeek', 'inProgress', 'done'];
         let tasks = [];
         let draggedTask = null;
+        const UI_STATE = {
+            backlogExpanded: false,
+            inProgressExpanded: false,
+            doneShowAll: false
+        };
 
         // ============================================================
         // PERSONAL TASKS ONLY (source: aviel)
@@ -335,20 +393,27 @@
 
             const canonicalIds = new Set(PERSONAL_TASKS.map(t => t.id));
             const userMoved = {};
+            const existingTaskById = {};
             existing.forEach(t => {
-                if (canonicalIds.has(t.id) && t._userMoved) {
-                    userMoved[t.id] = t.column;
+                if (canonicalIds.has(t.id)) {
+                    existingTaskById[t.id] = t;
+                    if (t._userMoved) userMoved[t.id] = t.column;
                 }
             });
 
             const userTasks = existing.filter(t => !canonicalIds.has(t.id));
-            const merged = PERSONAL_TASKS.map(t => ({
-                ...t,
-                source: 'aviel',
-                column: userMoved[t.id] || t.column,
-                _userMoved: !!userMoved[t.id],
-                createdAt: t.createdAt || new Date().toISOString()
-            }));
+            const merged = PERSONAL_TASKS.map(t => {
+                const prior = existingTaskById[t.id] || {};
+                return {
+                    ...t,
+                    source: 'aviel',
+                    column: userMoved[t.id] || t.column,
+                    _userMoved: !!userMoved[t.id],
+                    createdAt: prior.createdAt || t.createdAt || new Date().toISOString(),
+                    completedAt: prior.completedAt || t.completedAt || null,
+                    priority: prior.priority || t.priority || 'normal'
+                };
+            });
 
             tasks = [...merged, ...userTasks.filter(t => t.source === 'aviel')];
             localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
@@ -388,7 +453,9 @@
                 column: 'backlog',
                 tag: tag || 'personal',
                 source: 'aviel',
-                createdAt: new Date().toISOString()
+                priority: 'normal',
+                createdAt: new Date().toISOString(),
+                completedAt: null
             });
             saveTasks();
             renderTasks();
@@ -403,8 +470,12 @@
         function moveTask(id, newColumn) {
             const task = tasks.find(t => t.id === id);
             if (task && COLUMNS.includes(newColumn)) {
+                const oldColumn = task.column;
                 task.column = newColumn;
                 task._userMoved = true;
+                if (newColumn === 'done' && oldColumn !== 'done') {
+                    task.completedAt = new Date().toISOString();
+                }
                 saveTasks();
                 renderTasks();
             }
@@ -420,23 +491,118 @@
 
             Object.values(columns).forEach(col => col.innerHTML = '');
             const counts = { backlog: 0, thisWeek: 0, inProgress: 0, done: 0 };
+            const tasksByColumn = { backlog: [], thisWeek: [], inProgress: [], done: [] };
 
             tasks.forEach(task => {
-                if (!columns[task.column]) return;
+                if (!tasksByColumn[task.column]) return;
                 counts[task.column]++;
-                columns[task.column].appendChild(createTaskElement(task));
+                tasksByColumn[task.column].push(task);
             });
 
-            COLUMNS.forEach(key => {
-                document.getElementById(key + '-count').textContent = counts[key];
-                if (counts[key] === 0) columns[key].innerHTML = '<div class="empty-state">No tasks</div>';
-            });
+            const backlogTasks = tasksByColumn.backlog.sort(sortHighPriorityFirst);
+            const thisWeekTasks = tasksByColumn.thisWeek.sort(sortHighPriorityFirst);
+            const inProgressTasks = tasksByColumn.inProgress.sort(sortHighPriorityFirst);
+            const doneTasksAll = tasksByColumn.done.sort(sortHighPriorityFirst);
+            const doneTasksToday = doneTasksAll.filter(isTaskCompletedToday);
+
+            backlogTasks.forEach(task => columns.backlog.appendChild(createTaskElement(task)));
+            thisWeekTasks.forEach(task => columns.thisWeek.appendChild(createTaskElement(task)));
+
+            const inProgressVisible = UI_STATE.inProgressExpanded ? inProgressTasks : inProgressTasks.slice(0, 3);
+            inProgressVisible.forEach(task => columns.inProgress.appendChild(createTaskElement(task)));
+
+            const doneVisible = UI_STATE.doneShowAll ? doneTasksAll : doneTasksToday;
+            doneVisible.forEach(task => columns.done.appendChild(createTaskElement(task)));
+
+            if (backlogTasks.length === 0) columns.backlog.innerHTML = '<div class="empty-state">No tasks</div>';
+            if (thisWeekTasks.length === 0) columns.thisWeek.innerHTML = '<div class="empty-state">No tasks</div>';
+            if (inProgressVisible.length === 0) columns.inProgress.innerHTML = '<div class="empty-state">No tasks</div>';
+            if (doneVisible.length === 0) {
+                columns.done.innerHTML = doneTasksAll.length > 0 && !UI_STATE.doneShowAll
+                    ? '<div class="empty-state">No wins logged today yet</div>'
+                    : '<div class="empty-state">No tasks</div>';
+            }
+
+            document.getElementById('backlog-count').textContent = counts.backlog;
+            document.getElementById('thisWeek-count').textContent = counts.thisWeek;
+            document.getElementById('inProgress-count').textContent = counts.inProgress;
+            document.getElementById('done-count').textContent = UI_STATE.doneShowAll ? doneTasksAll.length : doneTasksToday.length;
+            document.getElementById('backlog-title').textContent = `📋 Backlog (${counts.backlog})`;
+            document.getElementById('done-subtitle').textContent = `${doneTasksAll.length} total all-time`;
+
+            setBacklogCollapsedState();
+            renderInProgressToggle(inProgressTasks.length);
+            renderDoneToggle(doneTasksAll.length, doneTasksToday.length);
 
             document.getElementById('statBacklog').textContent = counts.backlog;
             document.getElementById('statThisWeek').textContent = counts.thisWeek;
             document.getElementById('statInProgress').textContent = counts.inProgress;
             document.getElementById('statDone').textContent = counts.done;
             document.getElementById('statTotal').textContent = tasks.length;
+        }
+
+        function sortHighPriorityFirst(a, b) {
+            if (a.priority === 'high' && b.priority !== 'high') return -1;
+            if (a.priority !== 'high' && b.priority === 'high') return 1;
+            return 0;
+        }
+
+        function isTaskCompletedToday(task) {
+            if (!task.completedAt) return false;
+            const completed = new Date(task.completedAt);
+            if (Number.isNaN(completed.getTime())) return false;
+            const now = new Date();
+            return completed.getFullYear() === now.getFullYear() &&
+                completed.getMonth() === now.getMonth() &&
+                completed.getDate() === now.getDate();
+        }
+
+        function setBacklogCollapsedState() {
+            const body = document.getElementById('backlog-body');
+            const chevron = document.getElementById('backlog-chevron');
+            const toggle = document.getElementById('backlog-toggle');
+            body.classList.toggle('collapsed', !UI_STATE.backlogExpanded);
+            chevron.textContent = UI_STATE.backlogExpanded ? '▼' : '▶';
+            toggle.setAttribute('aria-expanded', String(UI_STATE.backlogExpanded));
+        }
+
+        function renderInProgressToggle(totalInProgress) {
+            const wrap = document.getElementById('inProgress-more-wrap');
+            wrap.innerHTML = '';
+            if (totalInProgress <= 3) return;
+
+            const btn = document.createElement('button');
+            btn.className = 'toggle-link';
+            if (UI_STATE.inProgressExpanded) {
+                btn.textContent = '▼ Show less';
+            } else {
+                btn.textContent = `▶ and ${totalInProgress - 3} more...`;
+            }
+            btn.addEventListener('click', () => {
+                UI_STATE.inProgressExpanded = !UI_STATE.inProgressExpanded;
+                renderTasks();
+            });
+            wrap.appendChild(btn);
+        }
+
+        function renderDoneToggle(totalDone, todayDone) {
+            const wrap = document.getElementById('done-view-all-wrap');
+            wrap.innerHTML = '';
+            const hiddenCount = Math.max(0, totalDone - todayDone);
+            if (!UI_STATE.doneShowAll && hiddenCount === 0) return;
+
+            const btn = document.createElement('button');
+            btn.className = 'toggle-link';
+            if (UI_STATE.doneShowAll) {
+                btn.textContent = '▼ Show today only';
+            } else {
+                btn.textContent = `▶ View all (${totalDone})`;
+            }
+            btn.addEventListener('click', () => {
+                UI_STATE.doneShowAll = !UI_STATE.doneShowAll;
+                renderTasks();
+            });
+            wrap.appendChild(btn);
         }
 
         function createTaskElement(task) {
@@ -495,6 +661,27 @@
                     addTask(e.target.value, tag);
                     e.target.value = '';
                 }
+            });
+
+            const backlogToggle = document.getElementById('backlog-toggle');
+            backlogToggle.addEventListener('click', () => {
+                UI_STATE.backlogExpanded = !UI_STATE.backlogExpanded;
+                setBacklogCollapsedState();
+            });
+            backlogToggle.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    UI_STATE.backlogExpanded = !UI_STATE.backlogExpanded;
+                    setBacklogCollapsedState();
+                }
+            });
+            backlogToggle.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+            backlogToggle.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const taskId = e.dataTransfer.getData('text/plain');
+                moveTask(taskId, 'backlog');
             });
 
             document.getElementById('syncBtn').addEventListener('click', () => {
