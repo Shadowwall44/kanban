@@ -9,11 +9,6 @@
     "resetAt": "Mon 12:59 PM",
     "note": "All models"
   },
-  "sonnet": {
-    "pct": 0,
-    "resetAt": "Wed 11:59 AM",
-    "note": "Sonnet only"
-  },
   "model": {
     "active": "Opus 4.6",
     "status": "ok",
