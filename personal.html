@@ -373,7 +373,7 @@
             { id: 'p9', text: 'Kids tuition', column: 'backlog', tag: 'finance', source: 'aviel' },
             { id: 'p10', text: 'Call MariePopShop - partnership', column: 'backlog', tag: 'personal', source: 'aviel' }
         ];
-        // SYNC_TIMESTAMP: 2026-02-12T13:50:00Z
+        // SYNC_TIMESTAMP: 2026-02-12T21:58:00Z
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -719,6 +719,45 @@
                 return closest;
             }, { offset: Number.NEGATIVE_INFINITY }).element;
         }
+        // === LIVE UPDATE CHECKER ===
+        (function() {
+            const CHECK_INTERVAL = 30000;
+            let currentTimestamp = '';
+            const tsMatch = document.documentElement.innerHTML.match(/SYNC_TIMESTAMP:\s*([^\n<]+)/);
+            if (tsMatch) currentTimestamp = tsMatch[1].trim();
+
+            let banner = null;
+
+            function createBanner() {
+                if (banner) return;
+                banner = document.createElement('div');
+                banner.id = 'live-update-banner';
+                banner.innerHTML = '🔄 Board updated — <strong>tap to refresh</strong>';
+                banner.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#f59e0b;color:#0f0f23;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;z-index:9999;box-shadow:0 8px 25px rgba(245,158,11,0.4);animation:slideUp 0.3s ease-out;font-family:-apple-system,sans-serif;';
+                banner.addEventListener('click', () => location.reload());
+                document.body.appendChild(banner);
+
+                const style = document.createElement('style');
+                style.textContent = '@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
+                document.head.appendChild(style);
+            }
+
+            async function checkForUpdates() {
+                try {
+                    const res = await fetch(location.href + '?_=' + Date.now(), { cache: 'no-store' });
+                    const text = await res.text();
+                    const match = text.match(/SYNC_TIMESTAMP:\s*([^\n<]+)/);
+                    if (match) {
+                        const remoteTs = match[1].trim();
+                        if (currentTimestamp && remoteTs !== currentTimestamp) {
+                            createBanner();
+                        }
+                    }
+                } catch (e) { /* silent fail */ }
+            }
+
+            setInterval(checkForUpdates, CHECK_INTERVAL);
+        })();
     </script>
 </body>
 </html>

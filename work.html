@@ -455,7 +455,7 @@
             { id: 'd12', text: '✅ Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
             { id: 'd13', text: '✅ YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
         ];
-        // SYNC_TIMESTAMP: 2026-02-12T19:17:00Z
+        // SYNC_TIMESTAMP: 2026-02-12T21:58:00Z
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -808,6 +808,45 @@
                 return closest;
             }, { offset: Number.NEGATIVE_INFINITY }).element;
         }
+        // === LIVE UPDATE CHECKER ===
+        (function() {
+            const CHECK_INTERVAL = 30000; // 30 seconds
+            let currentTimestamp = '';
+            const tsMatch = document.documentElement.innerHTML.match(/SYNC_TIMESTAMP:\s*([^\n<]+)/);
+            if (tsMatch) currentTimestamp = tsMatch[1].trim();
+
+            let banner = null;
+
+            function createBanner() {
+                if (banner) return;
+                banner = document.createElement('div');
+                banner.id = 'live-update-banner';
+                banner.innerHTML = '🔄 Board updated — <strong>tap to refresh</strong>';
+                banner.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#6366f1;color:white;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;z-index:9999;box-shadow:0 8px 25px rgba(99,102,241,0.4);animation:slideUp 0.3s ease-out;font-family:-apple-system,sans-serif;';
+                banner.addEventListener('click', () => location.reload());
+                document.body.appendChild(banner);
+
+                const style = document.createElement('style');
+                style.textContent = '@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
+                document.head.appendChild(style);
+            }
+
+            async function checkForUpdates() {
+                try {
+                    const res = await fetch(location.href + '?_=' + Date.now(), { cache: 'no-store' });
+                    const text = await res.text();
+                    const match = text.match(/SYNC_TIMESTAMP:\s*([^\n<]+)/);
+                    if (match) {
+                        const remoteTs = match[1].trim();
+                        if (currentTimestamp && remoteTs !== currentTimestamp) {
+                            createBanner();
+                        }
+                    }
+                } catch (e) { /* silent fail */ }
+            }
+
+            setInterval(checkForUpdates, CHECK_INTERVAL);
+        })();
     </script>
 </body>
 </html>
