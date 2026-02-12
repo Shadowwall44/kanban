@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ ChetGPT Work Board</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0f0f23;
+            --panel: #18181b;
+            --panel-2: #27272a;
+            --text: #e4e4e7;
+            --muted: #a1a1aa;
+            --subtle: #71717a;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --danger: #ef4444;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--panel-2);
+        }
+        h1 { font-size: 24px; font-weight: 700; color: #f4f4f5; }
+        .last-sync { font-size: 11px; color: #52525b; }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        #taskInput, #tagSelect {
+            padding: 10px 14px;
+            font-size: 14px;
+            border: 1px solid #3f3f46;
+            border-radius: 10px;
+            background: var(--panel);
+            color: var(--text);
+            outline: none;
+        }
+        #taskInput { width: 280px; }
+        #taskInput:focus, #tagSelect:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        #tagSelect { cursor: pointer; font-size: 13px; }
+
+        .btn {
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.25);
+        }
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-sync {
+            background: #059669;
+            color: white;
+            font-size: 12px;
+            padding: 8px 14px;
+        }
+        .btn-sync:hover { background: #047857; }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            padding: 10px 20px;
+            background: var(--panel);
+            border-radius: 10px;
+            border: 1px solid var(--panel-2);
+            margin-bottom: 20px;
+        }
+        .stat-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+        .stat-value { font-weight: 700; color: var(--text); }
+        .stat-label { font-size: 12px; color: var(--subtle); }
+
+        .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .column {
+            background: var(--panel);
+            border-radius: 12px;
+            padding: 16px;
+            min-height: 420px;
+            border: 1px solid var(--panel-2);
+        }
+        .column-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--panel-2);
+        }
+        .column-icon { width: 10px; height: 10px; border-radius: 50%; }
+        .column-title { font-size: 14px; font-weight: 700; flex: 1; }
+        .task-count {
+            font-size: 12px;
+            color: var(--subtle);
+            background: var(--panel-2);
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+
+        .backlog .column-icon { background: #f59e0b; }
+        .in-progress .column-icon { background: #3b82f6; }
+        .chet-active .column-icon { background: #a855f7; animation: pulse 2s infinite; }
+        .done .column-icon { background: #22c55e; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .tasks { display: flex; flex-direction: column; gap: 10px; min-height: 320px; }
+        .task {
+            background: var(--panel-2);
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: grab;
+            position: relative;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            border-left: 3px solid #a855f7;
+        }
+        .task:hover {
+            background: #3f3f46;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+        }
+        .task.dragging { opacity: 0.5; }
+
+        /* Glowing effect for tasks in ChetGPT Active column */
+        .chet-active .task {
+            border-left: 3px solid #a855f7;
+            animation: taskGlow 2.5s ease-in-out infinite;
+        }
+        @keyframes taskGlow {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(168, 85, 247, 0.15), 0 0 10px rgba(168, 85, 247, 0.08);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(168, 85, 247, 0.4), 0 0 30px rgba(168, 85, 247, 0.2), 0 0 45px rgba(168, 85, 247, 0.1);
+            }
+        }
+        .chet-active .task:hover {
+            animation: none;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 8px 18px rgba(0, 0, 0, 0.25);
+        }
+
+        /* HIGH PRIORITY — red glow + badge, always floats to top */
+        .task.priority-high {
+            border-left: 3px solid #ef4444;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), var(--panel-2));
+            animation: highPriorityGlow 3s ease-in-out infinite;
+        }
+        .chet-active .task.priority-high {
+            animation: highPriorityGlow 3s ease-in-out infinite, taskGlow 2.5s ease-in-out infinite;
+        }
+        @keyframes highPriorityGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.1); }
+            50% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.3), 0 0 25px rgba(239, 68, 68, 0.12); }
+        }
+        .task.priority-high:hover {
+            animation: none;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4), 0 8px 18px rgba(0, 0, 0, 0.25);
+        }
+        .priority-badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 1px 6px;
+            border-radius: 4px;
+            background: #991b1b;
+            color: #fca5a5;
+            letter-spacing: 0.5px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        .task-text { font-size: 13px; line-height: 1.45; word-break: break-word; padding-right: 20px; }
+
+        .task-tag {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            margin-top: 6px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+        .tag-setup { background: #1c4532; color: #86efac; }
+        .tag-scraping { background: #713f12; color: #fde047; }
+        .tag-research { background: #4c1d95; color: #c4b5fd; }
+        .tag-MIS { background: #1e3a5f; color: #93c5fd; }
+        .tag-infra { background: #7c2d12; color: #fdba74; }
+
+        .delete-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 22px;
+            height: 22px;
+            border: none;
+            background: transparent;
+            color: var(--subtle);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            opacity: 0;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .task:hover .delete-btn { opacity: 1; }
+        .delete-btn:hover { background: var(--danger); color: white; }
+
+        .task-meta { margin-top: 6px; font-size: 11px; color: #52525b; }
+        .empty-state { text-align: center; padding: 30px 15px; color: #52525b; font-size: 13px; }
+
+        @media (max-width: 1200px) { .board { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 860px) {
+            header { flex-direction: column; align-items: stretch; }
+            .header-actions { flex-wrap: wrap; }
+            #taskInput { width: 100%; }
+        }
+        @media (max-width: 700px) { .board { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>⚡ ChetGPT Work Board</h1>
+                <span class="last-sync" id="lastSync">Last sync: --</span>
+            </div>
+            <div class="header-actions">
+                <input type="text" id="taskInput" placeholder="Add a work task..." maxlength="220">
+                <select id="tagSelect" aria-label="Task tag">
+                    <option value="setup">🟢 setup</option>
+                    <option value="scraping">🟡 scraping</option>
+                    <option value="research">🟣 research</option>
+                    <option value="MIS">🔵 MIS</option>
+                    <option value="infra">🟠 infra</option>
+                </select>
+                <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none;">
+                    <input type="checkbox" id="priorityCheck" style="accent-color:#ef4444;width:16px;height:16px;">🔴 High
+                </label>
+                <button class="btn btn-primary" id="addBtn">Add</button>
+                <button class="btn btn-sync" id="syncBtn">🔄 Sync</button>
+            </div>
+        </header>
+
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item"><span class="stat-label">Backlog:</span><span class="stat-value" id="statBacklog">0</span></div>
+            <div class="stat-item"><span class="stat-label">In Progress:</span><span class="stat-value" id="statInProgress">0</span></div>
+            <div class="stat-item"><span class="stat-label">ChetGPT Active:</span><span class="stat-value" id="statActive">0</span></div>
+            <div class="stat-item"><span class="stat-label">Done:</span><span class="stat-value" id="statDone">0</span></div>
+            <div class="stat-item"><span class="stat-label">Total:</span><span class="stat-value" id="statTotal">0</span></div>
+        </div>
+
+        <div class="board">
+            <div class="column backlog" data-column="backlog">
+                <div class="column-header">
+                    <div class="column-icon"></div>
+                    <span class="column-title">📋 Backlog</span>
+                    <span class="task-count" id="backlog-count">0</span>
+                </div>
+                <div class="tasks" id="backlog"></div>
+            </div>
+
+            <div class="column in-progress" data-column="inProgress">
+                <div class="column-header">
+                    <div class="column-icon"></div>
+                    <span class="column-title">🔥 In Progress</span>
+                    <span class="task-count" id="inProgress-count">0</span>
+                </div>
+                <div class="tasks" id="inProgress"></div>
+            </div>
+
+            <div class="column chet-active" data-column="chetActive">
+                <div class="column-header">
+                    <div class="column-icon"></div>
+                    <span class="column-title">🤖 ChetGPT Active</span>
+                    <span class="task-count" id="chetActive-count">0</span>
+                </div>
+                <div class="tasks" id="chetActive"></div>
+            </div>
+
+            <div class="column done" data-column="done">
+                <div class="column-header">
+                    <div class="column-icon"></div>
+                    <span class="column-title">✅ Done</span>
+                    <span class="task-count" id="done-count">0</span>
+                </div>
+                <div class="tasks" id="done"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'kanban_work_v1';
+        const COLUMNS = ['backlog', 'inProgress', 'chetActive', 'done'];
+        let tasks = [];
+        let draggedTask = null;
+
+        // ============================================================
+        // WORK TASKS ONLY (source: chet)
+        // Columns: backlog, inProgress, chetActive, done
+        // Tags: setup, scraping, research, MIS, infra
+        // ============================================================
+        const CHET_TASKS = [
+            { id: 'c1', text: '🔍 Verifying session memory search is enabled', column: 'chetActive', tag: 'setup', source: 'chet' },
+
+            { id: 'fin1', text: '💰 Get business + personal finance numbers into ChetGPT — full picture of where we stand', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
+            { id: 'tm1', text: '📋 Review INKredible team meeting transcript (Feb 9) — cash flow, Brandon concerns, action items', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
+            { id: 'tm2', text: '📱 Upload Brandon meeting recording from Samsung Z-Fold 7 (Feb 12) — highly productive, don\'t forget!', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
+            { id: 'c13', text: '🧠 Deeper brain dump — who Aviel really is, flaws, patterns, how to build that into ChetGPT', column: 'inProgress', tag: 'setup', source: 'chet', priority: 'high' },
+            { id: 'mis1', text: 'MIS Phase 1: Get Extractor + PDFs into workspace', column: 'inProgress', tag: 'MIS', source: 'chet' },
+            { id: 'gh1', text: 'Deploy Kanban to GitHub Pages', column: 'inProgress', tag: 'infra', source: 'chet' },
+            { id: 'gh2', text: 'Put INKredible Extractor on GitHub', column: 'inProgress', tag: 'infra', source: 'chet' },
+
+            { id: 'c14', text: '🔄 Reverse prompting session — unlock proactive behavior', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c15', text: '💻 Install Codex CLI as coding muscle (free via GPT-5.2)', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c16', text: '🛠️ Build custom pricing calculator skill', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c17', text: '🛠️ Build custom invoice extractor skill', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c18', text: '💬 Set up Discord as multi-agent workspace', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c19', text: '📊 Afternoon research report (printing industry trends)', column: 'backlog', tag: 'research', source: 'chet' },
+            { id: 'c20', text: '🛠️ Build customer quote generator skill', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c21', text: '🛠️ Build paper stock lookup skill', column: 'backlog', tag: 'setup', source: 'chet' },
+
+            { id: 'c4', text: 'Complete 5x7 NDF postcard scrape (qty 2000-5000 + double-sided)', column: 'backlog', tag: 'scraping', source: 'chet' },
+            { id: 'c5', text: 'Scrape 4x6 NDF postcards (single + double sided)', column: 'backlog', tag: 'scraping', source: 'chet' },
+            { id: 'c6', text: 'Scrape 6x9 NDF postcards (single + double sided)', column: 'backlog', tag: 'scraping', source: 'chet' },
+            { id: 'c7', text: 'Find NDF internal pricing API (bypass slow browser)', column: 'backlog', tag: 'research', source: 'chet' },
+
+            { id: 'c8', text: 'Fund DeepSeek API ($5 at platform.deepseek.com)', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c9', text: 'Configure memory search (needs embedding provider)', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c10', text: 'Create unified OpenClaw command aliases + shortcuts', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c11', text: 'Set up repeatable daily execution checklist', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c12', text: 'Install jq + ripgrep for session-logs skill', column: 'backlog', tag: 'setup', source: 'chet' },
+
+            { id: 'mis2', text: 'MIS Phase 2: Read Extractor code + test PDFs', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'mis3', text: 'MIS Phase 3: Scrape 8 NDF products (Codex 5.3)', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'mis4', text: 'MIS Phase 4: Build pricing engine (costs + NDF 3-tier)', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'mis5', text: 'MIS Phase 5: Inventory + FIFO lot tracking', column: 'backlog', tag: 'MIS', source: 'chet' },
+
+            { id: 'd1', text: '✅ Upgraded to Opus 4.6', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd2', text: '✅ Confirmed GPT-5.2 working (Codex OAuth)', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd3', text: '✅ Configured Brave Search API', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd4', text: '✅ Installed YouTube transcript tool', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd5', text: '✅ Pulled 11 Alex Finn transcripts (55,903 words)', column: 'done', tag: 'research', source: 'chet' },
+            { id: 'd6', text: '✅ Removed broken gpt-4o-codex model', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd7', text: '✅ Updated OpenClaw to 2026.2.9', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd8', text: '✅ Set up morning brief cron (8AM Mon-Fri)', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd9', text: '✅ Built Kanban board + cost tracking', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd10', text: '✅ 5x7 postcards partial scrape (qty 25-1000)', column: 'done', tag: 'scraping', source: 'chet' },
+            { id: 'd11', text: '✅ Analyzed 11 Alex Finn transcripts (55,903 words)', column: 'done', tag: 'research', source: 'chet' },
+            { id: 'd12', text: '✅ Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
+            { id: 'd13', text: '✅ YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
+        ];
+        // SYNC_TIMESTAMP: 2026-02-12T19:17:00Z
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            syncTasks();
+            loadTasks();
+            renderTasks();
+            setupEventListeners();
+            updateSyncTime();
+        });
+
+        function syncTasks() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            let existing = [];
+            if (stored) {
+                try { existing = JSON.parse(stored); } catch(e) { existing = []; }
+            }
+
+            const canonicalIds = new Set(CHET_TASKS.map(t => t.id));
+            const userMoved = {};
+            existing.forEach(t => {
+                if (canonicalIds.has(t.id) && t._userMoved) {
+                    userMoved[t.id] = t.column;
+                }
+            });
+
+            const userTasks = existing.filter(t => !canonicalIds.has(t.id));
+            const merged = CHET_TASKS.map(t => ({
+                ...t,
+                source: 'chet',
+                column: userMoved[t.id] || t.column,
+                _userMoved: !!userMoved[t.id],
+                createdAt: t.createdAt || new Date().toISOString()
+            }));
+
+            tasks = [...merged, ...userTasks.filter(t => t.source === 'chet')];
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        }
+
+        function updateSyncTime() {
+            const match = document.body.innerHTML.match(/SYNC_TIMESTAMP:\s*([^\n<]+)/);
+            if (match) {
+                const d = new Date(match[1].trim());
+                document.getElementById('lastSync').textContent = 'Last sync: ' + d.toLocaleString();
+            }
+        }
+
+        function loadTasks() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try { tasks = JSON.parse(stored); } catch(e) { tasks = []; }
+            }
+            tasks = tasks.filter(t => t.source === 'chet');
+        }
+
+        function saveTasks() {
+            tasks = tasks.filter(t => t.source === 'chet');
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        }
+
+        function generateId() {
+            return 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2);
+        }
+
+        function addTask(text, tag, priority) {
+            const trimmed = text.trim();
+            if (!trimmed) return;
+            tasks.push({
+                id: generateId(),
+                text: trimmed,
+                column: 'backlog',
+                tag: tag || 'setup',
+                priority: priority || 'normal',
+                source: 'chet',
+                createdAt: new Date().toISOString()
+            });
+            saveTasks();
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveTasks();
+            renderTasks();
+        }
+
+        function moveTask(id, newColumn) {
+            const task = tasks.find(t => t.id === id);
+            if (task && COLUMNS.includes(newColumn)) {
+                task.column = newColumn;
+                task._userMoved = true;
+                saveTasks();
+                renderTasks();
+            }
+        }
+
+        function renderTasks() {
+            const columns = {
+                backlog: document.getElementById('backlog'),
+                inProgress: document.getElementById('inProgress'),
+                chetActive: document.getElementById('chetActive'),
+                done: document.getElementById('done')
+            };
+
+            Object.values(columns).forEach(col => col.innerHTML = '');
+            const counts = { backlog: 0, inProgress: 0, chetActive: 0, done: 0 };
+
+            // Sort: high priority first, then normal
+            const sorted = [...tasks].sort((a, b) => {
+                if (a.priority === 'high' && b.priority !== 'high') return -1;
+                if (a.priority !== 'high' && b.priority === 'high') return 1;
+                return 0;
+            });
+
+            sorted.forEach(task => {
+                if (!columns[task.column]) return;
+                counts[task.column]++;
+                columns[task.column].appendChild(createTaskElement(task));
+            });
+
+            COLUMNS.forEach(key => {
+                document.getElementById(key + '-count').textContent = counts[key];
+                if (counts[key] === 0) columns[key].innerHTML = '<div class="empty-state">No tasks</div>';
+            });
+
+            document.getElementById('statBacklog').textContent = counts.backlog;
+            document.getElementById('statInProgress').textContent = counts.inProgress;
+            document.getElementById('statActive').textContent = counts.chetActive;
+            document.getElementById('statDone').textContent = counts.done;
+            document.getElementById('statTotal').textContent = tasks.length;
+        }
+
+        function createTaskElement(task) {
+            const el = document.createElement('div');
+            el.className = 'task';
+            el.draggable = true;
+            el.dataset.id = task.id;
+
+            if (task.priority === 'high') el.classList.add('priority-high');
+
+            const tagClass = 'tag-' + (task.tag || 'setup');
+            const tagLabel = task.tag || 'setup';
+            const priorityBadge = task.priority === 'high' ? '<span class="priority-badge">🔴 HIGH</span>' : '';
+            el.innerHTML = `
+                <span class="task-text">${escapeHtml(task.text)}${priorityBadge}</span>
+                <button class="delete-btn" title="Delete">×</button>
+                <div class="task-meta">
+                    🤖 <span class="task-tag ${tagClass}">${tagLabel}</span>
+                </div>
+            `;
+
+            el.querySelector('.delete-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteTask(task.id);
+            });
+
+            el.addEventListener('dragstart', function(e) {
+                draggedTask = this;
+                this.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', this.dataset.id);
+            });
+
+            el.addEventListener('dragend', function() {
+                this.classList.remove('dragging');
+                draggedTask = null;
+            });
+
+            return el;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function setupEventListeners() {
+            document.getElementById('addBtn').addEventListener('click', () => {
+                const input = document.getElementById('taskInput');
+                const tag = document.getElementById('tagSelect').value;
+                const pri = document.getElementById('priorityCheck').checked ? 'high' : 'normal';
+                addTask(input.value, tag, pri);
+                input.value = '';
+                document.getElementById('priorityCheck').checked = false;
+                input.focus();
+            });
+
+            document.getElementById('taskInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const tag = document.getElementById('tagSelect').value;
+                    const pri = document.getElementById('priorityCheck').checked ? 'high' : 'normal';
+                    addTask(e.target.value, tag, pri);
+                    e.target.value = '';
+                    document.getElementById('priorityCheck').checked = false;
+                }
+            });
+
+            document.getElementById('syncBtn').addEventListener('click', () => {
+                localStorage.removeItem(STORAGE_KEY);
+                syncTasks();
+                loadTasks();
+                renderTasks();
+                alert('Synced work board defaults.');
+            });
+
+            document.querySelectorAll('.tasks').forEach(column => {
+                column.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    const afterEl = getDragAfterElement(column, e.clientY);
+                    const draggable = document.querySelector('.dragging');
+                    if (!draggable) return;
+                    if (!afterEl) column.appendChild(draggable);
+                    else column.insertBefore(draggable, afterEl);
+                });
+
+                column.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const taskId = e.dataTransfer.getData('text/plain');
+                    moveTask(taskId, column.id);
+                });
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const els = [...container.querySelectorAll('.task:not(.dragging)')];
+            return els.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) return { offset, element: child };
+                return closest;
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 Aviel's Personal Board</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0f0f23;
+            --panel: #18181b;
+            --panel-2: #27272a;
+            --text: #e4e4e7;
+            --muted: #a1a1aa;
+            --subtle: #71717a;
+            --accent: #f59e0b;
+            --accent-hover: #d97706;
+            --danger: #ef4444;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background:
+                radial-gradient(1100px 380px at 50% -150px, rgba(245, 158, 11, 0.14), transparent 65%),
+                var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding: 16px;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, rgba(24, 24, 27, 0.94) 45%, rgba(24, 24, 27, 0.96) 100%);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+        }
+        h1 { font-size: 24px; font-weight: 700; color: #f8fafc; }
+        .subtitle { font-size: 12px; color: #fcd79b; margin-top: 2px; letter-spacing: 0.2px; }
+        .last-sync { font-size: 11px; color: #71717a; }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        #taskInput, #tagSelect {
+            padding: 10px 14px;
+            font-size: 14px;
+            border: 1px solid #3f3f46;
+            border-radius: 10px;
+            background: #13131c;
+            color: var(--text);
+            outline: none;
+        }
+        #taskInput { width: 300px; }
+        #taskInput:focus, #tagSelect:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.22);
+        }
+        #tagSelect { cursor: pointer; font-size: 13px; }
+
+        .btn {
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #161616;
+            box-shadow: 0 8px 22px rgba(245, 158, 11, 0.32);
+        }
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-sync {
+            background: #374151;
+            color: #e5e7eb;
+            font-size: 12px;
+            padding: 8px 14px;
+        }
+        .btn-sync:hover { background: #4b5563; }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            padding: 11px 16px;
+            background: var(--panel);
+            border: 1px solid #3d321e;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+        .stat-value { font-weight: 700; color: #f3f4f6; }
+        .stat-label { font-size: 12px; color: var(--subtle); }
+
+        .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .column {
+            background: var(--panel);
+            border-radius: 14px;
+            padding: 16px;
+            min-height: 420px;
+            border: 1px solid var(--panel-2);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+        }
+        .column-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--panel-2);
+        }
+        .column-icon { width: 10px; height: 10px; border-radius: 50%; }
+        .column-title { font-size: 14px; font-weight: 700; flex: 1; }
+        .task-count {
+            font-size: 12px;
+            color: var(--subtle);
+            background: var(--panel-2);
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+
+        .backlog .column-icon { background: #f59e0b; }
+        .this-week .column-icon { background: #38bdf8; }
+        .in-progress .column-icon { background: #f472b6; }
+        .done .column-icon { background: #22c55e; }
+
+        .tasks { display: flex; flex-direction: column; gap: 10px; min-height: 320px; }
+        .task {
+            background: var(--panel-2);
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: grab;
+            position: relative;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            border-left: 3px solid #f59e0b;
+        }
+        .task:hover {
+            background: #3f3f46;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.23);
+        }
+        .task.dragging { opacity: 0.5; }
+
+        .task-text { font-size: 13px; line-height: 1.45; word-break: break-word; padding-right: 20px; }
+        .task-tag {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            margin-top: 6px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+
+        .tag-personal { background: #1e3a5f; color: #93c5fd; }
+        .tag-family { background: #831843; color: #fbcfe8; }
+        .tag-health { background: #14532d; color: #86efac; }
+        .tag-finance { background: #7c2d12; color: #fdba74; }
+        .tag-home { background: #134e4a; color: #99f6e4; }
+
+        .delete-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 22px;
+            height: 22px;
+            border: none;
+            background: transparent;
+            color: var(--subtle);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            opacity: 0;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .task:hover .delete-btn { opacity: 1; }
+        .delete-btn:hover { background: var(--danger); color: white; }
+
+        .task-meta { margin-top: 6px; font-size: 11px; color: #52525b; }
+        .empty-state { text-align: center; padding: 30px 15px; color: #52525b; font-size: 13px; }
+
+        @media (max-width: 1200px) { .board { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 900px) {
+            header { flex-direction: column; align-items: stretch; }
+            .header-actions { flex-wrap: wrap; }
+            #taskInput { width: 100%; }
+        }
+        @media (max-width: 700px) { .board { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>🏠 Aviel's Personal Board</h1>
+                <div class="subtitle">Focused, premium personal execution board</div>
+                <span class="last-sync" id="lastSync">Last sync: --</span>
+            </div>
+            <div class="header-actions">
+                <input type="text" id="taskInput" placeholder="Add a personal task..." maxlength="220">
+                <select id="tagSelect" aria-label="Task tag">
+                    <option value="personal">🔵 personal</option>
+                    <option value="family">🩷 family</option>
+                    <option value="health">🟢 health</option>
+                    <option value="finance">🟠 finance</option>
+                    <option value="home">🟦 home</option>
+                </select>
+                <button class="btn btn-primary" id="addBtn">Add</button>
+                <button class="btn btn-sync" id="syncBtn">🔄 Sync</button>
+            </div>
+        </header>
+
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item"><span class="stat-label">Backlog:</span><span class="stat-value" id="statBacklog">0</span></div>
+            <div class="stat-item"><span class="stat-label">This Week:</span><span class="stat-value" id="statThisWeek">0</span></div>
+            <div class="stat-item"><span class="stat-label">In Progress:</span><span class="stat-value" id="statInProgress">0</span></div>
+            <div class="stat-item"><span class="stat-label">Done:</span><span class="stat-value" id="statDone">0</span></div>
+            <div class="stat-item"><span class="stat-label">Total:</span><span class="stat-value" id="statTotal">0</span></div>
+        </div>
+
+        <div class="board">
+            <div class="column backlog" data-column="backlog">
+                <div class="column-header">
+                    <div class="column-icon"></div>
+                    <span class="column-title">📋 Backlog</span>
+                    <span class="task-count" id="backlog-count">0</span>
+                </div>
+                <div class="tasks" id="backlog"></div>
+            </div>
+
+            <div class="column this-week" data-column="thisWeek">
+                <div class="column-header">
+                    <div class="column-icon"></div>
+                    <span class="column-title">🗓️ This Week</span>
+                    <span class="task-count" id="thisWeek-count">0</span>
+                </div>
+                <div class="tasks" id="thisWeek"></div>
+            </div>
+
+            <div class="column in-progress" data-column="inProgress">
+                <div class="column-header">
+                    <div class="column-icon"></div>
+                    <span class="column-title">🔥 In Progress</span>
+                    <span class="task-count" id="inProgress-count">0</span>
+                </div>
+                <div class="tasks" id="inProgress"></div>
+            </div>
+
+            <div class="column done" data-column="done">
+                <div class="column-header">
+                    <div class="column-icon"></div>
+                    <span class="column-title">✅ Done</span>
+                    <span class="task-count" id="done-count">0</span>
+                </div>
+                <div class="tasks" id="done"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'kanban_personal_v1';
+        const COLUMNS = ['backlog', 'thisWeek', 'inProgress', 'done'];
+        let tasks = [];
+        let draggedTask = null;
+
+        // ============================================================
+        // PERSONAL TASKS ONLY (source: aviel)
+        // Columns: backlog, thisWeek, inProgress, done
+        // Tags: personal, family, health, finance, home
+        // ============================================================
+        const PERSONAL_TASKS = [
+            { id: 'p1', text: 'Dov RosenFeld - Canada Shipment MUST SEND', column: 'inProgress', tag: 'personal', source: 'aviel' },
+            { id: 'p2', text: 'Eva birthday - Plan it 🎂', column: 'inProgress', tag: 'family', source: 'aviel' },
+            { id: 'p3', text: 'Call UPS to Dispute Charges', column: 'inProgress', tag: 'finance', source: 'aviel' },
+            { id: 'p4', text: 'Showerhead - ORDER from Home Depot', column: 'inProgress', tag: 'home', source: 'aviel' },
+            { id: 'p5', text: 'Pay HLSF website payments', column: 'inProgress', tag: 'finance', source: 'aviel' },
+
+            { id: 'p6', text: 'DIVERSIFIED: Call about tax on last invoice', column: 'backlog', tag: 'finance', source: 'aviel' },
+            { id: 'p7', text: 'HEALTH INSURANCE: Call to change', column: 'backlog', tag: 'health', source: 'aviel' },
+            { id: 'p8', text: 'Make reservations with Daniel and Hanna', column: 'backlog', tag: 'family', source: 'aviel' },
+            { id: 'p9', text: 'Kids tuition', column: 'backlog', tag: 'finance', source: 'aviel' },
+            { id: 'p10', text: 'Call MariePopShop - partnership', column: 'backlog', tag: 'personal', source: 'aviel' }
+        ];
+        // SYNC_TIMESTAMP: 2026-02-12T13:50:00Z
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            syncTasks();
+            loadTasks();
+            renderTasks();
+            setupEventListeners();
+            updateSyncTime();
+        });
+
+        function syncTasks() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            let existing = [];
+            if (stored) {
+                try { existing = JSON.parse(stored); } catch(e) { existing = []; }
+            }
+
+            const canonicalIds = new Set(PERSONAL_TASKS.map(t => t.id));
+            const userMoved = {};
+            existing.forEach(t => {
+                if (canonicalIds.has(t.id) && t._userMoved) {
+                    userMoved[t.id] = t.column;
+                }
+            });
+
+            const userTasks = existing.filter(t => !canonicalIds.has(t.id));
+            const merged = PERSONAL_TASKS.map(t => ({
+                ...t,
+                source: 'aviel',
+                column: userMoved[t.id] || t.column,
+                _userMoved: !!userMoved[t.id],
+                createdAt: t.createdAt || new Date().toISOString()
+            }));
+
+            tasks = [...merged, ...userTasks.filter(t => t.source === 'aviel')];
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        }
+
+        function updateSyncTime() {
+            const match = document.body.innerHTML.match(/SYNC_TIMESTAMP:\s*([^\n<]+)/);
+            if (match) {
+                const d = new Date(match[1].trim());
+                document.getElementById('lastSync').textContent = 'Last sync: ' + d.toLocaleString();
+            }
+        }
+
+        function loadTasks() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try { tasks = JSON.parse(stored); } catch(e) { tasks = []; }
+            }
+            tasks = tasks.filter(t => t.source === 'aviel');
+        }
+
+        function saveTasks() {
+            tasks = tasks.filter(t => t.source === 'aviel');
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        }
+
+        function generateId() {
+            return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2);
+        }
+
+        function addTask(text, tag) {
+            const trimmed = text.trim();
+            if (!trimmed) return;
+            tasks.push({
+                id: generateId(),
+                text: trimmed,
+                column: 'backlog',
+                tag: tag || 'personal',
+                source: 'aviel',
+                createdAt: new Date().toISOString()
+            });
+            saveTasks();
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveTasks();
+            renderTasks();
+        }
+
+        function moveTask(id, newColumn) {
+            const task = tasks.find(t => t.id === id);
+            if (task && COLUMNS.includes(newColumn)) {
+                task.column = newColumn;
+                task._userMoved = true;
+                saveTasks();
+                renderTasks();
+            }
+        }
+
+        function renderTasks() {
+            const columns = {
+                backlog: document.getElementById('backlog'),
+                thisWeek: document.getElementById('thisWeek'),
+                inProgress: document.getElementById('inProgress'),
+                done: document.getElementById('done')
+            };
+
+            Object.values(columns).forEach(col => col.innerHTML = '');
+            const counts = { backlog: 0, thisWeek: 0, inProgress: 0, done: 0 };
+
+            tasks.forEach(task => {
+                if (!columns[task.column]) return;
+                counts[task.column]++;
+                columns[task.column].appendChild(createTaskElement(task));
+            });
+
+            COLUMNS.forEach(key => {
+                document.getElementById(key + '-count').textContent = counts[key];
+                if (counts[key] === 0) columns[key].innerHTML = '<div class="empty-state">No tasks</div>';
+            });
+
+            document.getElementById('statBacklog').textContent = counts.backlog;
+            document.getElementById('statThisWeek').textContent = counts.thisWeek;
+            document.getElementById('statInProgress').textContent = counts.inProgress;
+            document.getElementById('statDone').textContent = counts.done;
+            document.getElementById('statTotal').textContent = tasks.length;
+        }
+
+        function createTaskElement(task) {
+            const el = document.createElement('div');
+            el.className = 'task';
+            el.draggable = true;
+            el.dataset.id = task.id;
+
+            const tagClass = 'tag-' + (task.tag || 'personal');
+            const tagLabel = task.tag || 'personal';
+            el.innerHTML = `
+                <span class="task-text">${escapeHtml(task.text)}</span>
+                <button class="delete-btn" title="Delete">×</button>
+                <div class="task-meta">
+                    👤 <span class="task-tag ${tagClass}">${tagLabel}</span>
+                </div>
+            `;
+
+            el.querySelector('.delete-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteTask(task.id);
+            });
+
+            el.addEventListener('dragstart', function(e) {
+                draggedTask = this;
+                this.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', this.dataset.id);
+            });
+
+            el.addEventListener('dragend', function() {
+                this.classList.remove('dragging');
+                draggedTask = null;
+            });
+
+            return el;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function setupEventListeners() {
+            document.getElementById('addBtn').addEventListener('click', () => {
+                const input = document.getElementById('taskInput');
+                const tag = document.getElementById('tagSelect').value;
+                addTask(input.value, tag);
+                input.value = '';
+                input.focus();
+            });
+
+            document.getElementById('taskInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const tag = document.getElementById('tagSelect').value;
+                    addTask(e.target.value, tag);
+                    e.target.value = '';
+                }
+            });
+
+            document.getElementById('syncBtn').addEventListener('click', () => {
+                localStorage.removeItem(STORAGE_KEY);
+                syncTasks();
+                loadTasks();
+                renderTasks();
+                alert('Synced personal board defaults.');
+            });
+
+            document.querySelectorAll('.tasks').forEach(column => {
+                column.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    const afterEl = getDragAfterElement(column, e.clientY);
+                    const draggable = document.querySelector('.dragging');
+                    if (!draggable) return;
+                    if (!afterEl) column.appendChild(draggable);
+                    else column.insertBefore(draggable, afterEl);
+                });
+
+                column.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const taskId = e.dataTransfer.getData('text/plain');
+                    moveTask(taskId, column.id);
+                });
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const els = [...container.querySelectorAll('.task:not(.dragging)')];
+            return els.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) return { offset, element: child };
+                return closest;
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+    </script>
+</body>
+</html>
