@@ -491,15 +491,23 @@
         }
         .changelog-panel {
             margin-top: 6px;
-            padding: 10px 14px;
+            padding: 8px 14px;
             background: linear-gradient(135deg, #18181b 0%, #1a1a2e 100%);
             border: 1px solid #2d2d44;
             border-radius: 10px;
-            max-height: 200px;
-            overflow-y: auto;
             display: none;
         }
         .changelog-panel.open { display: block; }
+        .changelog-more {
+            font-size: 11px;
+            color: var(--accent);
+            cursor: pointer;
+            padding: 4px 0;
+            border: none;
+            background: none;
+            font-weight: 600;
+        }
+        .changelog-more:hover { text-decoration: underline; }
         .changelog-item {
             font-size: 12px;
             padding: 4px 0;
@@ -747,7 +755,7 @@
             { id: 'd12', text: '✅ Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
             { id: 'd13', text: '✅ YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
         ];
-        // SYNC_TIMESTAMP: 2026-02-12T22:52:00Z
+        // SYNC_TIMESTAMP: 2026-02-12T22:59:00Z
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1191,22 +1199,41 @@
                 wrap.style.display = 'block';
                 title.innerHTML = 'Changes since last visit <span class="badge">' + changes.length + '</span>';
 
-                let html = '';
-                changes.forEach(c => {
-                    const shortText = c.text.length > 60 ? c.text.slice(0, 57) + '...' : c.text;
+                const MAX_VISIBLE = 3;
+                let showAll = false;
+
+                function buildItem(c) {
+                    const shortText = c.text.length > 55 ? c.text.slice(0, 52) + '...' : c.text;
                     if (c.type === 'moved') {
                         const icon = c.to === 'done' ? '✅' : '➡️';
-                        html += '<div class="changelog-item"><span class="cl-icon">' + icon + '</span><span class="cl-task">' + escapeHtml(shortText) + '</span><br><span class="cl-detail">Moved: ' + COL_LABELS[c.from] + ' → ' + COL_LABELS[c.to] + '</span></div>';
+                        return '<div class="changelog-item"><span class="cl-icon">' + icon + '</span><span class="cl-task">' + escapeHtml(shortText) + '</span> <span class="cl-detail">' + COL_LABELS[c.from] + ' → ' + COL_LABELS[c.to] + '</span></div>';
                     } else if (c.type === 'added') {
-                        html += '<div class="changelog-item"><span class="cl-icon">➕</span><span class="cl-task">' + escapeHtml(shortText) + '</span><br><span class="cl-detail">Added to ' + COL_LABELS[c.to] + '</span></div>';
+                        return '<div class="changelog-item"><span class="cl-icon">➕</span><span class="cl-task">' + escapeHtml(shortText) + '</span> <span class="cl-detail">→ ' + COL_LABELS[c.to] + '</span></div>';
                     } else if (c.type === 'removed') {
-                        html += '<div class="changelog-item"><span class="cl-icon">🗑️</span><span class="cl-task">' + escapeHtml(shortText) + '</span><br><span class="cl-detail">Removed from ' + COL_LABELS[c.from] + '</span></div>';
+                        return '<div class="changelog-item"><span class="cl-icon">🗑️</span><span class="cl-task">' + escapeHtml(shortText) + '</span> <span class="cl-detail">from ' + COL_LABELS[c.from] + '</span></div>';
                     }
-                });
+                    return '';
+                }
 
-                panel.innerHTML = html;
-                // Auto-open if changes exist
-                panel.classList.add('open');
+                function renderItems() {
+                    const visible = showAll ? changes : changes.slice(0, MAX_VISIBLE);
+                    let html = visible.map(buildItem).join('');
+                    if (!showAll && changes.length > MAX_VISIBLE) {
+                        html += '<button class="changelog-more" id="clShowMore">▸ and ' + (changes.length - MAX_VISIBLE) + ' more changes...</button>';
+                    } else if (showAll && changes.length > MAX_VISIBLE) {
+                        html += '<button class="changelog-more" id="clShowLess">▴ show less</button>';
+                    }
+                    panel.innerHTML = html;
+
+                    const moreBtn = document.getElementById('clShowMore');
+                    const lessBtn = document.getElementById('clShowLess');
+                    if (moreBtn) moreBtn.addEventListener('click', (e) => { e.stopPropagation(); showAll = true; renderItems(); });
+                    if (lessBtn) lessBtn.addEventListener('click', (e) => { e.stopPropagation(); showAll = false; renderItems(); });
+                }
+
+                renderItems();
+                // Start COLLAPSED — user taps to expand
+                panel.classList.remove('open');
 
                 toggle.addEventListener('click', () => {
                     panel.classList.toggle('open');
