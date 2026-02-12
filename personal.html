@@ -192,8 +192,7 @@
         .task-meta { margin-top: 6px; font-size: 11px; color: #52525b; }
         .empty-state { text-align: center; padding: 30px 15px; color: #52525b; font-size: 13px; }
 
-        @media (max-width: 1200px) { .board { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 900px) {
+        @media (max-width: 1200px) {
             header { flex-direction: column; align-items: stretch; }
             .header-actions { flex-wrap: wrap; }
             #taskInput { width: 100%; }
@@ -206,8 +205,8 @@
                 padding-bottom: 12px;
             }
             .column {
-                min-width: 280px;
-                max-width: 320px;
+                min-width: 300px;
+                max-width: 340px;
                 flex-shrink: 0;
                 scroll-snap-align: start;
             }
