@@ -517,43 +517,47 @@
         // Tags: setup, scraping, research, MIS, infra
         // ============================================================
         const CHET_TASKS = [
+            // === DONE (today) ===
             { id: 'c1', text: '✅ Verified session memory search is enabled', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T19:00:00Z' },
-            { id: 'ext1', text: '🔄 Processing 164 vendor invoices through Extractor — extracting material costs', column: 'chetActive', tag: 'MIS', source: 'chet' },
-            { id: 'vault1', text: '📖 Reading & analyzing INKredible Vault (116 files) — full business context loaded', column: 'chetActive', tag: 'MIS', source: 'chet' },
-
-            { id: 'fin1', text: '💰 Get business + personal finance numbers into ChetGPT — full picture of where we stand', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
-            { id: 'tm1', text: '📋 Review INKredible team meeting transcript (Feb 9) — cash flow, Brandon concerns, action items', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
-            { id: 'tm2', text: '📱 Upload Brandon meeting recording from Samsung Z-Fold 7 (Feb 12) — highly productive, don\'t forget!', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
-            { id: 'c13', text: '🧠 Deeper brain dump — who Aviel really is, flaws, patterns, how to build that into ChetGPT', column: 'inProgress', tag: 'setup', source: 'chet', priority: 'high' },
-            { id: 'mis1', text: 'MIS Phase 1: Get Extractor + PDFs into workspace', column: 'inProgress', tag: 'MIS', source: 'chet' },
+            { id: 'vault1', text: '✅ Read & analyzed INKredible Vault (116 files) — full business context loaded', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-12T20:30:00Z' },
+            { id: 'mis1', text: '✅ MIS Phase 1: Extractor + 164 PDFs + Vault pulled into workspace', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-12T21:20:00Z' },
             { id: 'gh1', text: '✅ Deploy Kanban to GitHub Pages', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T20:44:00Z' },
-            { id: 'gh2', text: 'Put INKredible Extractor on GitHub', column: 'inProgress', tag: 'infra', source: 'chet' },
-
-            { id: 'c14', text: '🔄 Reverse prompting session — unlock proactive behavior', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'gh2', text: '✅ INKredible Extractor on GitHub — pulled to workspace', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T21:15:00Z' },
             { id: 'c15', text: '✅ Install Codex CLI v0.101.0 as coding muscle', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T21:30:00Z' },
+            { id: 'c12', text: '✅ Install jq 1.7.1 + ripgrep 14.1.1', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T21:32:00Z' },
+            { id: 'c9', text: '✅ Configure memory search (Google Gemini embeddings)', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T19:30:00Z' },
+            { id: 'fuel1', text: '✅ Built fuel gauge — live usage tracker on Kanban board', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T22:08:00Z' },
+
+            // === CHETGPT ACTIVE (working on right now) ===
+            { id: 'mis2', text: '🔧 MIS Phase 2: Get Extractor running (npm install + dev server + test PDFs)', column: 'chetActive', tag: 'MIS', source: 'chet' },
+            { id: 'tm1', text: '📋 Review team meeting transcript (Feb 9) — cash flow analysis with vault context', column: 'chetActive', tag: 'MIS', source: 'chet', priority: 'high' },
+
+            // === IN PROGRESS (waiting on Aviel) ===
+            { id: 'fin1', text: '💰 Get business + personal finance numbers into ChetGPT', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
+            { id: 'tm2', text: '📱 Upload Brandon meeting recording (Feb 12) from Z-Fold 7', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
+            { id: 'c13', text: '🧠 Deeper brain dump — who Aviel really is, patterns, flaws', column: 'inProgress', tag: 'setup', source: 'chet', priority: 'high' },
+
+            // === BACKLOG ===
+            { id: 'ext1', text: '📊 Extract material costs from 164 vendor invoices (after Extractor verified)', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'mis3', text: 'MIS Phase 3: Scrape 8 NDF products (Codex 5.3)', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'mis4', text: 'MIS Phase 4: Build pricing engine (costs + NDF 3-tier)', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'mis5', text: 'MIS Phase 5: Inventory + FIFO lot tracking', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'c14', text: '🔄 Reverse prompting session — unlock proactive behavior', column: 'backlog', tag: 'setup', source: 'chet' },
             { id: 'c16', text: '🛠️ Build custom pricing calculator skill', column: 'backlog', tag: 'setup', source: 'chet' },
             { id: 'c17', text: '🛠️ Build custom invoice extractor skill', column: 'backlog', tag: 'setup', source: 'chet' },
             { id: 'c18', text: '💬 Set up Discord as multi-agent workspace', column: 'backlog', tag: 'setup', source: 'chet' },
             { id: 'c19', text: '📊 Afternoon research report (printing industry trends)', column: 'backlog', tag: 'research', source: 'chet' },
             { id: 'c20', text: '🛠️ Build customer quote generator skill', column: 'backlog', tag: 'setup', source: 'chet' },
             { id: 'c21', text: '🛠️ Build paper stock lookup skill', column: 'backlog', tag: 'setup', source: 'chet' },
-
             { id: 'c4', text: 'Complete 5x7 NDF postcard scrape (qty 2000-5000 + double-sided)', column: 'backlog', tag: 'scraping', source: 'chet' },
             { id: 'c5', text: 'Scrape 4x6 NDF postcards (single + double sided)', column: 'backlog', tag: 'scraping', source: 'chet' },
             { id: 'c6', text: 'Scrape 6x9 NDF postcards (single + double sided)', column: 'backlog', tag: 'scraping', source: 'chet' },
             { id: 'c7', text: 'Find NDF internal pricing API (bypass slow browser)', column: 'backlog', tag: 'research', source: 'chet' },
-
             { id: 'c8', text: 'Fund DeepSeek API ($5 at platform.deepseek.com)', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c9', text: 'Configure memory search (needs embedding provider)', column: 'backlog', tag: 'setup', source: 'chet' },
             { id: 'c10', text: 'Create unified OpenClaw command aliases + shortcuts', column: 'backlog', tag: 'setup', source: 'chet' },
             { id: 'c11', text: 'Set up repeatable daily execution checklist', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c12', text: '✅ Install jq 1.7.1 + ripgrep 14.1.1', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T21:32:00Z' },
 
-            { id: 'mis2', text: 'MIS Phase 2: Read Extractor code + test PDFs', column: 'backlog', tag: 'MIS', source: 'chet' },
-            { id: 'mis3', text: 'MIS Phase 3: Scrape 8 NDF products (Codex 5.3)', column: 'backlog', tag: 'MIS', source: 'chet' },
-            { id: 'mis4', text: 'MIS Phase 4: Build pricing engine (costs + NDF 3-tier)', column: 'backlog', tag: 'MIS', source: 'chet' },
-            { id: 'mis5', text: 'MIS Phase 5: Inventory + FIFO lot tracking', column: 'backlog', tag: 'MIS', source: 'chet' },
-
+            // === DONE (older) ===
             { id: 'd1', text: '✅ Upgraded to Opus 4.6', column: 'done', tag: 'setup', source: 'chet' },
             { id: 'd2', text: '✅ Confirmed GPT-5.2 working (Codex OAuth)', column: 'done', tag: 'setup', source: 'chet' },
             { id: 'd3', text: '✅ Configured Brave Search API', column: 'done', tag: 'setup', source: 'chet' },
@@ -568,7 +572,7 @@
             { id: 'd12', text: '✅ Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
             { id: 'd13', text: '✅ YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
         ];
-        // SYNC_TIMESTAMP: 2026-02-12T22:04:00Z
+        // SYNC_TIMESTAMP: 2026-02-12T22:10:00Z
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', () => {
