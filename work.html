@@ -459,6 +459,64 @@
             margin-left: auto;
         }
 
+        /* === CHANGELOG PANEL === */
+        .changelog-wrap {
+            margin-bottom: 16px;
+        }
+        .changelog-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--panel);
+            border: 1px solid #2d2d44;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            transition: all 0.2s;
+            width: 100%;
+            text-align: left;
+        }
+        .changelog-toggle:hover { background: #1e1b2e; }
+        .changelog-toggle .badge {
+            background: var(--accent);
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 1px 7px;
+            border-radius: 8px;
+            margin-left: 4px;
+        }
+        .changelog-panel {
+            margin-top: 6px;
+            padding: 10px 14px;
+            background: linear-gradient(135deg, #18181b 0%, #1a1a2e 100%);
+            border: 1px solid #2d2d44;
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        .changelog-panel.open { display: block; }
+        .changelog-item {
+            font-size: 12px;
+            padding: 4px 0;
+            color: var(--muted);
+            border-bottom: 1px solid rgba(63, 63, 70, 0.3);
+        }
+        .changelog-item:last-child { border-bottom: none; }
+        .changelog-item .cl-icon { margin-right: 4px; }
+        .changelog-item .cl-task { color: var(--text); font-weight: 600; }
+        .changelog-item .cl-detail { color: var(--subtle); font-size: 11px; }
+        .changelog-empty {
+            font-size: 12px;
+            color: var(--subtle);
+            font-style: italic;
+            padding: 6px 0;
+        }
+
         @media (max-width: 1200px) {
             .fuel-gauge { gap: 10px; padding: 8px 12px; }
             .fuel-item { min-width: 140px; }
@@ -561,6 +619,13 @@
             <span class="page-loaded" id="pageLoaded">🔄 Loaded: --</span>
         </div>
 
+        <div class="changelog-wrap" id="changelogWrap" style="display:none;">
+            <button class="changelog-toggle" id="changelogToggle">
+                📝 <span id="changelogTitle">Changes since last visit</span>
+            </button>
+            <div class="changelog-panel" id="changelogPanel"></div>
+        </div>
+
         <div class="board">
             <div class="column backlog" data-column="backlog">
                 <div class="column-header toggleable" id="backlog-toggle" role="button" tabindex="0" aria-expanded="false">
@@ -647,7 +712,7 @@
             { id: 'c13', text: '🧠 Deeper brain dump — who Aviel really is, patterns, flaws', column: 'inProgress', tag: 'setup', source: 'chet', priority: 'high' },
 
             // === BACKLOG ===
-            { id: 'ext1', text: '📊 Extract material costs from 164 vendor invoices (after Extractor verified)', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'ext1', text: '📊 Extracting material costs from 159 vendor invoices (17/159 processing...)', column: 'chetActive', tag: 'MIS', source: 'chet' },
             { id: 'mis3', text: 'MIS Phase 3: Scrape 8 NDF products (Codex 5.3)', column: 'backlog', tag: 'MIS', source: 'chet' },
             { id: 'mis4', text: 'MIS Phase 4: Build pricing engine (costs + NDF 3-tier)', column: 'backlog', tag: 'MIS', source: 'chet' },
             { id: 'mis5', text: 'MIS Phase 5: Inventory + FIFO lot tracking', column: 'backlog', tag: 'MIS', source: 'chet' },
@@ -681,7 +746,7 @@
             { id: 'd12', text: '✅ Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
             { id: 'd13', text: '✅ YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
         ];
-        // SYNC_TIMESTAMP: 2026-02-12T22:43:00Z
+        // SYNC_TIMESTAMP: 2026-02-12T22:49:00Z
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1071,6 +1136,91 @@
                 return closest;
             }, { offset: Number.NEGATIVE_INFINITY }).element;
         }
+        // === CHANGELOG DIFF ===
+        (function() {
+            const SNAP_KEY = 'kanban_work_snapshot';
+            const COL_LABELS = {
+                backlog: '📋 Backlog',
+                inProgress: '🔥 In Progress',
+                chetActive: '🤖 ChetGPT Active',
+                done: '✅ Done'
+            };
+
+            function buildSnapshot() {
+                const snap = {};
+                tasks.forEach(t => {
+                    snap[t.id] = { text: t.text, column: t.column, tag: t.tag, priority: t.priority };
+                });
+                return snap;
+            }
+
+            function computeChanges(oldSnap, newSnap) {
+                const changes = [];
+                // Check new/moved tasks
+                for (const id in newSnap) {
+                    const cur = newSnap[id];
+                    const prev = oldSnap[id];
+                    if (!prev) {
+                        changes.push({ type: 'added', text: cur.text, to: cur.column });
+                    } else if (prev.column !== cur.column) {
+                        changes.push({ type: 'moved', text: cur.text, from: prev.column, to: cur.column });
+                    }
+                }
+                // Check removed tasks
+                for (const id in oldSnap) {
+                    if (!newSnap[id]) {
+                        changes.push({ type: 'removed', text: oldSnap[id].text, from: oldSnap[id].column });
+                    }
+                }
+                return changes;
+            }
+
+            function renderChangelog(changes) {
+                const wrap = document.getElementById('changelogWrap');
+                const panel = document.getElementById('changelogPanel');
+                const title = document.getElementById('changelogTitle');
+                const toggle = document.getElementById('changelogToggle');
+
+                if (changes.length === 0) {
+                    wrap.style.display = 'none';
+                    return;
+                }
+
+                wrap.style.display = 'block';
+                title.innerHTML = 'Changes since last visit <span class="badge">' + changes.length + '</span>';
+
+                let html = '';
+                changes.forEach(c => {
+                    const shortText = c.text.length > 60 ? c.text.slice(0, 57) + '...' : c.text;
+                    if (c.type === 'moved') {
+                        const icon = c.to === 'done' ? '✅' : '➡️';
+                        html += '<div class="changelog-item"><span class="cl-icon">' + icon + '</span><span class="cl-task">' + escapeHtml(shortText) + '</span><br><span class="cl-detail">Moved: ' + COL_LABELS[c.from] + ' → ' + COL_LABELS[c.to] + '</span></div>';
+                    } else if (c.type === 'added') {
+                        html += '<div class="changelog-item"><span class="cl-icon">➕</span><span class="cl-task">' + escapeHtml(shortText) + '</span><br><span class="cl-detail">Added to ' + COL_LABELS[c.to] + '</span></div>';
+                    } else if (c.type === 'removed') {
+                        html += '<div class="changelog-item"><span class="cl-icon">🗑️</span><span class="cl-task">' + escapeHtml(shortText) + '</span><br><span class="cl-detail">Removed from ' + COL_LABELS[c.from] + '</span></div>';
+                    }
+                });
+
+                panel.innerHTML = html;
+                // Auto-open if changes exist
+                panel.classList.add('open');
+
+                toggle.addEventListener('click', () => {
+                    panel.classList.toggle('open');
+                });
+            }
+
+            // Run after tasks are loaded
+            const oldSnap = JSON.parse(localStorage.getItem(SNAP_KEY) || '{}');
+            const newSnap = buildSnapshot();
+            const changes = computeChanges(oldSnap, newSnap);
+            renderChangelog(changes);
+
+            // Save current snapshot for next visit
+            localStorage.setItem(SNAP_KEY, JSON.stringify(newSnap));
+        })();
+
         // === FUEL GAUGE ===
         (function() {
             const FUEL_INTERVAL = 60000; // check every 60s
