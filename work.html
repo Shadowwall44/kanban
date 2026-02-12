@@ -208,6 +208,33 @@
             box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 8px 18px rgba(0, 0, 0, 0.25);
         }
 
+        /* CRITICAL PRIORITY — gold glow + star badge, always top */
+        .task.priority-critical {
+            border-left: 3px solid #f59e0b;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), var(--panel-2));
+            animation: criticalGlow 2.5s ease-in-out infinite;
+        }
+        @keyframes criticalGlow {
+            0%, 100% { box-shadow: 0 0 8px rgba(245, 158, 11, 0.15); }
+            50% { box-shadow: 0 0 18px rgba(245, 158, 11, 0.45), 0 0 35px rgba(245, 158, 11, 0.15); }
+        }
+        .task.priority-critical:hover {
+            animation: none;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.5), 0 8px 18px rgba(0, 0, 0, 0.25);
+        }
+        .priority-badge-critical {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 1px 6px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, #b45309, #d97706);
+            color: #fef3c7;
+            letter-spacing: 0.5px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
         /* HIGH PRIORITY — red glow + badge, always floats to top */
         .task.priority-high {
             border-left: 3px solid #ef4444;
@@ -715,6 +742,7 @@
             { id: 'tm1', text: '📋 Review team meeting transcript (Feb 9) — cash flow analysis with vault context', column: 'chetActive', tag: 'MIS', source: 'chet', priority: 'high' },
 
             // === IN PROGRESS (waiting on Aviel) ===
+            { id: 'qb1', text: '📊 Export QuickBooks P&L + Balance Sheet → send to ChetGPT → build real financial dashboard', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'critical' },
             { id: 'inv1', text: '📨 Send invoice to Shachar — TONIGHT', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
             { id: 'fin1', text: '💰 Get business + personal finance numbers into ChetGPT', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
             { id: 'tm2', text: '📱 Upload Brandon meeting recording (Feb 12) from Z-Fold 7', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
@@ -756,7 +784,7 @@
             { id: 'd12', text: '✅ Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
             { id: 'd13', text: '✅ YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
         ];
-        // SYNC_TIMESTAMP: 2026-02-12T23:08:00Z
+        // SYNC_TIMESTAMP: 2026-02-12T23:45:00Z
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -928,9 +956,10 @@
         }
 
         function sortHighPriorityFirst(a, b) {
-            if (a.priority === 'high' && b.priority !== 'high') return -1;
-            if (a.priority !== 'high' && b.priority === 'high') return 1;
-            return 0;
+            const rank = { critical: 0, high: 1 };
+            const aR = rank[a.priority] ?? 2;
+            const bR = rank[b.priority] ?? 2;
+            return aR - bR;
         }
 
         function sortNewestFirst(a, b) {
@@ -1005,11 +1034,12 @@
             el.draggable = true;
             el.dataset.id = task.id;
 
-            if (task.priority === 'high') el.classList.add('priority-high');
+            if (task.priority === 'critical') el.classList.add('priority-critical');
+            else if (task.priority === 'high') el.classList.add('priority-high');
 
             const tagClass = 'tag-' + (task.tag || 'setup');
             const tagLabel = task.tag || 'setup';
-            const priorityBadge = task.priority === 'high' ? '<span class="priority-badge">🔴 HIGH</span>' : '';
+            const priorityBadge = task.priority === 'critical' ? '<span class="priority-badge-critical">⭐ CRITICAL</span>' : task.priority === 'high' ? '<span class="priority-badge">🔴 HIGH</span>' : '';
             let timeStamp = '';
             if (task.completedAt) {
                 const d = new Date(task.completedAt);
