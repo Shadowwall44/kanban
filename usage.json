@@ -1,7 +1,7 @@
 {
   "session": {
-    "pct": 37,
-    "resetIn": "3hr 40min",
+    "pct": 39,
+    "resetIn": "3hr 23min",
     "note": "Current session"
   },
   "weekly": {
@@ -16,11 +16,11 @@
   },
   "thinking": {
     "current": "high",
-    "high": 28,
+    "high": 32,
     "medium": 2,
     "low": 0,
     "note": "Today's exchanges by thinking level"
   },
-  "updatedAt": "2026-02-12T17:20:00-05:00",
+  "updatedAt": "2026-02-12T17:36:00-05:00",
   "updatedBy": "ChetGPT"
 }
