@@ -413,6 +413,52 @@
             color: var(--subtle);
             font-style: italic;
         }
+        /* === TAG FILTER BAR === */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--panel);
+            border-radius: 10px;
+            border: 1px solid var(--panel-2);
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .filter-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--subtle);
+            margin-right: 4px;
+        }
+        .filter-pill {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 10px;
+            border: 1px solid #3f3f46;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-pill:hover { border-color: var(--accent); color: var(--text); }
+        .filter-pill.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        .filter-pill.active-setup { background: #1c4532; border-color: #1c4532; color: #86efac; }
+        .filter-pill.active-scraping { background: #713f12; border-color: #713f12; color: #fde047; }
+        .filter-pill.active-research { background: #4c1d95; border-color: #4c1d95; color: #c4b5fd; }
+        .filter-pill.active-MIS { background: #1e3a5f; border-color: #1e3a5f; color: #93c5fd; }
+        .filter-pill.active-infra { background: #7c2d12; border-color: #7c2d12; color: #fdba74; }
+        .page-loaded {
+            font-size: 11px;
+            color: #52525b;
+            margin-left: auto;
+        }
+
         @media (max-width: 1200px) {
             .fuel-gauge { gap: 10px; padding: 8px 12px; }
             .fuel-item { min-width: 140px; }
@@ -504,6 +550,17 @@
             <span class="fuel-updated" id="fuelUpdated">⏱ --</span>
         </div>
 
+        <div class="filter-bar" id="filterBar">
+            <span class="filter-label">🏷️ Filter:</span>
+            <button class="filter-pill active" data-filter="all">All</button>
+            <button class="filter-pill" data-filter="MIS">🔵 MIS</button>
+            <button class="filter-pill" data-filter="setup">🟢 setup</button>
+            <button class="filter-pill" data-filter="scraping">🟡 scraping</button>
+            <button class="filter-pill" data-filter="research">🟣 research</button>
+            <button class="filter-pill" data-filter="infra">🟠 infra</button>
+            <span class="page-loaded" id="pageLoaded">🔄 Loaded: --</span>
+        </div>
+
         <div class="board">
             <div class="column backlog" data-column="backlog">
                 <div class="column-header toggleable" id="backlog-toggle" role="button" tabindex="0" aria-expanded="false">
@@ -556,6 +613,7 @@
         const COLUMNS = ['backlog', 'inProgress', 'chetActive', 'done'];
         let tasks = [];
         let draggedTask = null;
+        let activeFilter = 'all';
         const UI_STATE = {
             backlogExpanded: false,
             inProgressExpanded: false,
@@ -623,7 +681,7 @@
             { id: 'd12', text: '✅ Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
             { id: 'd13', text: '✅ YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
         ];
-        // SYNC_TIMESTAMP: 2026-02-12T22:30:00Z
+        // SYNC_TIMESTAMP: 2026-02-12T22:43:00Z
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -745,13 +803,15 @@
             tasks.forEach(task => {
                 if (!tasksByColumn[task.column]) return;
                 counts[task.column]++;
-                tasksByColumn[task.column].push(task);
+                if (activeFilter === 'all' || task.tag === activeFilter) {
+                    tasksByColumn[task.column].push(task);
+                }
             });
 
             const backlogTasks = tasksByColumn.backlog.sort(sortHighPriorityFirst);
             const inProgressTasks = tasksByColumn.inProgress.sort(sortHighPriorityFirst);
             const activeTasks = tasksByColumn.chetActive.sort(sortHighPriorityFirst);
-            const doneTasksAll = tasksByColumn.done.sort(sortHighPriorityFirst);
+            const doneTasksAll = tasksByColumn.done.sort(sortNewestFirst);
             const doneTasksToday = doneTasksAll.filter(isTaskCompletedToday);
 
             backlogTasks.forEach(task => columns.backlog.appendChild(createTaskElement(task)));
@@ -795,6 +855,14 @@
             if (a.priority === 'high' && b.priority !== 'high') return -1;
             if (a.priority !== 'high' && b.priority === 'high') return 1;
             return 0;
+        }
+
+        function sortNewestFirst(a, b) {
+            const aTime = a.completedAt ? new Date(a.completedAt).getTime() : 0;
+            const bTime = b.completedAt ? new Date(b.completedAt).getTime() : 0;
+            if (isNaN(aTime)) return 1;
+            if (isNaN(bTime)) return -1;
+            return bTime - aTime; // newest first
         }
 
         function isTaskCompletedToday(task) {
@@ -950,6 +1018,23 @@
                 const taskId = e.dataTransfer.getData('text/plain');
                 moveTask(taskId, 'backlog');
             });
+
+            // Filter pills
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.addEventListener('click', () => {
+                    const filter = pill.dataset.filter;
+                    activeFilter = filter;
+                    document.querySelectorAll('.filter-pill').forEach(p => {
+                        p.className = 'filter-pill';
+                    });
+                    pill.className = 'filter-pill ' + (filter === 'all' ? 'active' : 'active-' + filter);
+                    renderTasks();
+                });
+            });
+
+            // Page loaded timestamp
+            const now = new Date();
+            document.getElementById('pageLoaded').textContent = '🔄 Loaded: ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
             document.getElementById('syncBtn').addEventListener('click', () => {
                 localStorage.removeItem(STORAGE_KEY);
