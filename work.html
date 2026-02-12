@@ -404,7 +404,9 @@
         // Tags: setup, scraping, research, MIS, infra
         // ============================================================
         const CHET_TASKS = [
-            { id: 'c1', text: '🔍 Verifying session memory search is enabled', column: 'chetActive', tag: 'setup', source: 'chet' },
+            { id: 'c1', text: '✅ Verified session memory search is enabled', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T19:00:00Z' },
+            { id: 'ext1', text: '🔄 Processing 164 vendor invoices through Extractor — extracting material costs', column: 'chetActive', tag: 'MIS', source: 'chet' },
+            { id: 'vault1', text: '📖 Reading & analyzing INKredible Vault (116 files) — full business context loaded', column: 'chetActive', tag: 'MIS', source: 'chet' },
 
             { id: 'fin1', text: '💰 Get business + personal finance numbers into ChetGPT — full picture of where we stand', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
             { id: 'tm1', text: '📋 Review INKredible team meeting transcript (Feb 9) — cash flow, Brandon concerns, action items', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
