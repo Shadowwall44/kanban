@@ -51,6 +51,12 @@
             --mesh-teal-deep: rgba(0, 122, 148, 0.04);
             --mesh-overlay: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 36%, rgba(255,255,255,0.12) 100%);
 
+            --action-bar-bg: rgba(255, 255, 255, 0.94);
+            --action-bar-border: rgba(0, 0, 0, 0.08);
+            --action-bar-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --action-btn-hover-bg: rgba(0, 151, 178, 0.10);
+            --action-btn-active-bg: rgba(196, 150, 46, 0.15);
+
             --scrollbar-track: transparent;
             --scrollbar-thumb: rgba(0, 0, 0, 0.12);
             --scrollbar-thumb-hover: rgba(0, 0, 0, 0.22);
@@ -103,6 +109,12 @@
             --mesh-rose: rgba(212, 126, 184, 0.12);
             --mesh-teal-deep: rgba(0, 122, 148, 0.12);
             --mesh-overlay: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 36%, rgba(255,255,255,0.02) 100%);
+
+            --action-bar-bg: rgba(255, 255, 255, 0.10);
+            --action-bar-border: rgba(255, 255, 255, 0.07);
+            --action-bar-shadow: 0px 18px 20px rgba(0, 0, 0, 0.2);
+            --action-btn-hover-bg: rgba(255, 255, 255, 0.10);
+            --action-btn-active-bg: rgba(196, 150, 46, 0.22);
 
             --scrollbar-track: rgba(255, 255, 255, 0.08);
             --scrollbar-thumb: rgba(255, 255, 255, 0.34);
@@ -172,7 +184,9 @@
         .btn-sync,
         .task-count,
         .thinking-pill,
-        .filter-pill {
+        .filter-pill,
+        .floating-action-bar,
+        .fab-btn {
             transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -279,64 +293,70 @@
             transform: translateY(-1px);
         }
 
-        .theme-toggle {
-            height: 42px;
-            border: 1px solid var(--panel-border);
-            border-radius: 780px;
-            padding: 0 8px;
-            background: var(--panel-bg);
-            color: var(--text-secondary);
+        .floating-action-bar {
+            position: fixed;
+            top: 24px;
+            right: 32px;
+            z-index: 1200;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 36px;
+            background: var(--action-bar-bg);
+            border: 1px solid var(--action-bar-border);
+            box-shadow: var(--action-bar-shadow);
+            backdrop-filter: blur(24px);
+        }
+
+        .fab-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: transparent;
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            box-shadow: var(--shadow-panel);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 0;
         }
 
-        .theme-toggle:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-panel-hover);
-            color: var(--text);
+        .fab-btn svg {
+            width: 19px;
+            height: 19px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
-        .theme-toggle:focus-visible {
+        .fab-btn:hover {
+            color: var(--accent-teal);
+            background: var(--action-btn-hover-bg);
+        }
+
+        .fab-btn:focus-visible {
             outline: none;
             box-shadow: 0 0 0 4px rgba(0, 151, 178, 0.18);
         }
 
-        .theme-toggle-track {
-            width: 40px;
-            height: 24px;
-            border-radius: 999px;
-            background: var(--surface-subtle);
-            border: 1px solid var(--panel-border);
-            padding: 2px;
-            display: inline-flex;
-            align-items: center;
+        .fab-btn.active {
+            background: var(--action-btn-active-bg);
         }
 
-        .theme-toggle-thumb {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-teal));
-            transform: translateX(0);
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+        #themeToggle.active { color: var(--accent-teal); }
+        #filterToggle.active { color: var(--accent-amber); }
+
+        #syncBtn.syncing {
+            color: var(--accent-teal);
+            background: var(--action-btn-active-bg);
         }
 
-        html[data-theme="dark"] .theme-toggle-thumb {
-            transform: translateX(16px);
-        }
-
-        .theme-toggle-label {
-            min-width: 42px;
-            text-align: left;
+        .filter-bar.is-hidden {
+            display: none;
         }
 
         .stats-bar {
@@ -1042,6 +1062,16 @@
             .header-actions { justify-content: flex-start; }
             #taskInput { width: min(100%, 400px); }
 
+            .floating-action-bar {
+                top: auto;
+                right: auto;
+                left: 50%;
+                bottom: 18px;
+                transform: translateX(-50%);
+            }
+
+            #live-update-banner { bottom: 86px; }
+
             .board {
                 display: flex !important;
                 flex-wrap: nowrap !important;
@@ -1064,7 +1094,7 @@
         }
 
         @media (max-width: 740px) {
-            body { padding: 20px; }
+            body { padding: 20px; padding-bottom: 108px; }
             .stats-bar { border-radius: var(--radius-panel); gap: 16px; }
             .filter-bar { border-radius: var(--radius-panel); }
             .column { min-width: 87vw; max-width: 87vw; padding: 18px; }
@@ -1095,11 +1125,6 @@
                     <input type="checkbox" id="priorityCheck" style="accent-color:var(--accent-purple);width:14px;height:14px;"> High
                 </label>
                 <button class="btn btn-primary" id="addBtn">Add</button>
-                <button class="btn btn-sync" id="syncBtn">Sync</button>
-                <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
-                    <span class="theme-toggle-track"><span class="theme-toggle-thumb"></span></span>
-                    <span class="theme-toggle-label" id="themeToggleLabel">Dark</span>
-                </button>
             </div>
         </header>
 
@@ -1200,9 +1225,22 @@
         </div>
     </div>
 
+    <div class="floating-action-bar" id="floatingActionBar" role="toolbar" aria-label="Board actions">
+        <button class="fab-btn" id="syncBtn" type="button" aria-label="Sync board" title="Sync board">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.9 3"/><path d="M20 20v-4h-4"/></svg>
+        </button>
+        <button class="fab-btn active" id="filterToggle" type="button" aria-label="Hide filters" aria-pressed="true" title="Hide filters">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16"/><path d="M7 12h10"/><path d="M10 18h4"/></svg>
+        </button>
+        <button class="fab-btn" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+        </button>
+    </div>
+
     <script>
         const STORAGE_KEY = 'kanban_work_v1';
         const THEME_KEY = 'kanban_theme';
+        const FILTER_BAR_KEY = 'kanban_filter_bar';
         const COLUMNS = ['backlog', 'inProgress', 'chetActive', 'done'];
         let tasks = [];
         let draggedTask = null;
@@ -1210,7 +1248,8 @@
         const UI_STATE = {
             backlogExpanded: false,
             inProgressExpanded: false,
-            doneShowAll: false
+            doneShowAll: false,
+            filterBarVisible: true
         };
 
         // ============================================================
@@ -1283,6 +1322,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             applySavedTheme();
+            applyFilterBarPref();
             syncTasks();
             loadTasks();
             renderTasks();
@@ -1296,12 +1336,12 @@
             if (dark) document.documentElement.setAttribute('data-theme', 'dark');
             else document.documentElement.removeAttribute('data-theme');
             const toggle = document.getElementById('themeToggle');
-            const label = document.getElementById('themeToggleLabel');
             if (toggle) {
+                toggle.classList.toggle('active', dark);
                 toggle.setAttribute('aria-pressed', String(dark));
                 toggle.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+                toggle.setAttribute('title', dark ? 'Switch to light mode' : 'Switch to dark mode');
             }
-            if (label) label.textContent = dark ? 'Light' : 'Dark';
         }
 
         function applySavedTheme() {
@@ -1314,6 +1354,36 @@
             const next = isDark ? 'light' : 'dark';
             setTheme(next);
             localStorage.setItem(THEME_KEY, next);
+        }
+
+        function applyFilterBarState() {
+            const filterBar = document.getElementById('filterBar');
+            const toggle = document.getElementById('filterToggle');
+            if (filterBar) filterBar.classList.toggle('is-hidden', !UI_STATE.filterBarVisible);
+            if (toggle) {
+                toggle.classList.toggle('active', UI_STATE.filterBarVisible);
+                toggle.setAttribute('aria-pressed', String(UI_STATE.filterBarVisible));
+                toggle.setAttribute('aria-label', UI_STATE.filterBarVisible ? 'Hide filters' : 'Show filters');
+                toggle.setAttribute('title', UI_STATE.filterBarVisible ? 'Hide filters' : 'Show filters');
+            }
+        }
+
+        function applyFilterBarPref() {
+            UI_STATE.filterBarVisible = localStorage.getItem(FILTER_BAR_KEY) !== 'hidden';
+            applyFilterBarState();
+        }
+
+        function toggleFilterBar() {
+            UI_STATE.filterBarVisible = !UI_STATE.filterBarVisible;
+            localStorage.setItem(FILTER_BAR_KEY, UI_STATE.filterBarVisible ? 'visible' : 'hidden');
+            applyFilterBarState();
+        }
+
+        function pulseSyncButton() {
+            const syncBtn = document.getElementById('syncBtn');
+            if (!syncBtn) return;
+            syncBtn.classList.add('syncing');
+            setTimeout(() => syncBtn.classList.remove('syncing'), 700);
         }
 
         function syncTasks() {
@@ -1475,7 +1545,8 @@
             document.querySelectorAll('.filter-pill').forEach(pill => { pill.addEventListener('click', () => { activeFilter=pill.dataset.filter; document.querySelectorAll('.filter-pill').forEach(p => p.className='filter-pill'); pill.className='filter-pill '+(activeFilter==='all'?'active':'active-'+activeFilter); renderTasks(); }); });
             document.getElementById('pageLoaded').textContent = 'Loaded: ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-            document.getElementById('syncBtn').addEventListener('click', () => { localStorage.removeItem(STORAGE_KEY); syncTasks(); loadTasks(); renderTasks(); alert('Synced work board defaults.'); });
+            document.getElementById('filterToggle').addEventListener('click', toggleFilterBar);
+            document.getElementById('syncBtn').addEventListener('click', () => { pulseSyncButton(); localStorage.removeItem(STORAGE_KEY); syncTasks(); loadTasks(); renderTasks(); alert('Synced work board defaults.'); });
             document.querySelectorAll('.tasks').forEach(column => {
                 column.addEventListener('dragover', (e) => { e.preventDefault(); const after=getDragAfterElement(column,e.clientY); const d=document.querySelector('.dragging'); if(!d)return; if(!after)column.appendChild(d); else column.insertBefore(d,after); });
                 column.addEventListener('drop', (e) => { e.preventDefault(); moveTask(e.dataTransfer.getData('text/plain'), column.id); });
