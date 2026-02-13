@@ -938,6 +938,66 @@
             word-break: break-word;
         }
 
+        .task-text-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .task-leading-icon,
+        .task-inline-icon,
+        .task-meta-icon {
+            width: 16px;
+            height: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 16px;
+            color: var(--text-secondary);
+            vertical-align: -2px;
+        }
+
+        .task-leading-icon {
+            margin-top: 2px;
+            color: var(--text-muted);
+        }
+
+        .task-text-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-inline-icon {
+            margin-right: 4px;
+            color: var(--text-muted);
+        }
+
+        .task-inline-icon.check,
+        .task-meta-icon.check {
+            color: var(--accent-green);
+        }
+
+        .task-leading-icon svg,
+        .task-inline-icon svg,
+        .task-meta-icon svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.75;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .task-meta-time {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);
+            font-size: 10px;
+            margin-left: 6px;
+        }
+
         .task-meta {
             margin-top: 12px;
             display: flex;
@@ -1252,6 +1312,31 @@
             filterBarVisible: true
         };
 
+        const TAG_ICON_MAP = {
+            MIS: 'barChart',
+            setup: 'settings',
+            scraping: 'download',
+            research: 'search',
+            infra: 'server'
+        };
+
+        const EMOJI_ICON_MAP = {
+            '✅': 'checkCircle',
+            '📊': 'barChart',
+            '🔧': 'wrench',
+            '📋': 'clipboard',
+            '💰': 'coin',
+            '📱': 'phone',
+            '🧠': 'bulb',
+            '🔄': 'refresh',
+            '🛠️': 'tools',
+            '🛠': 'tools',
+            '💬': 'chat',
+            '📅': 'calendar'
+        };
+
+        const TASK_EMOJI_REGEX = /(✅|📊|🔧|📋|💰|📱|🧠|🔄|🛠️|🛠|💬|📅)/g;
+
         // ============================================================
         // WORK TASKS ONLY (source: chet)
         // Columns: backlog, inProgress, chetActive, done
@@ -1259,41 +1344,41 @@
         // ============================================================
         const CHET_TASKS = [
             // === DONE (today) ===
-            { id: 'c1', text: '✅ Verified session memory search is enabled', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T19:00:00Z' },
-            { id: 'vault1', text: '✅ Read & analyzed INKredible Vault (116 files) — full business context loaded', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-12T20:30:00Z' },
-            { id: 'mis1', text: '✅ MIS Phase 1: Extractor + 164 PDFs + Vault pulled into workspace', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-12T21:20:00Z' },
-            { id: 'gh1', text: '✅ Deploy Kanban to GitHub Pages', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T20:44:00Z' },
-            { id: 'gh2', text: '✅ INKredible Extractor on GitHub — pulled to workspace', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T21:15:00Z' },
-            { id: 'c15', text: '✅ Install Codex CLI v0.101.0 as coding muscle', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T21:30:00Z' },
-            { id: 'c12', text: '✅ Install jq 1.7.1 + ripgrep 14.1.1', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T21:32:00Z' },
-            { id: 'c9', text: '✅ Configure memory search (Google Gemini embeddings)', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T19:30:00Z' },
-            { id: 'fuel1', text: '✅ Built fuel gauge — live usage tracker on Kanban board', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T22:08:00Z' },
+            { id: 'c1', text: 'Verified session memory search is enabled', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T19:00:00Z' },
+            { id: 'vault1', text: 'Read & analyzed INKredible Vault (116 files) — full business context loaded', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-12T20:30:00Z' },
+            { id: 'mis1', text: 'MIS Phase 1: Extractor + 164 PDFs + Vault pulled into workspace', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-12T21:20:00Z' },
+            { id: 'gh1', text: 'Deploy Kanban to GitHub Pages', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T20:44:00Z' },
+            { id: 'gh2', text: 'INKredible Extractor on GitHub — pulled to workspace', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T21:15:00Z' },
+            { id: 'c15', text: 'Install Codex CLI v0.101.0 as coding muscle', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T21:30:00Z' },
+            { id: 'c12', text: 'Install jq 1.7.1 + ripgrep 14.1.1', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T21:32:00Z' },
+            { id: 'c9', text: 'Configure memory search (Google Gemini embeddings)', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T19:30:00Z' },
+            { id: 'fuel1', text: 'Built fuel gauge — live usage tracker on Kanban board', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T22:08:00Z' },
 
             // === CHETGPT ACTIVE (working on right now) ===
-            { id: 'mis2', text: '🔧 MIS Phase 2: Get Extractor running (npm install + dev server + test PDFs)', column: 'chetActive', tag: 'MIS', source: 'chet' },
-            { id: 'tm1', text: '📋 Review team meeting transcript (Feb 9) — cash flow analysis with vault context', column: 'chetActive', tag: 'MIS', source: 'chet', priority: 'high' },
+            { id: 'mis2', text: 'MIS Phase 2: Get Extractor running (npm install + dev server + test PDFs)', column: 'chetActive', tag: 'MIS', source: 'chet' },
+            { id: 'tm1', text: 'Review team meeting transcript (Feb 9) — cash flow analysis with vault context', column: 'chetActive', tag: 'MIS', source: 'chet', priority: 'high' },
 
             // === IN PROGRESS (waiting on Aviel) ===
-            { id: 'qb1', text: '📊 Export QuickBooks P&L + Balance Sheet → send to ChetGPT → build real financial dashboard', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'critical' },
-            { id: 'inv1', text: '✅ Sent invoice to Shachar', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T02:59:00Z' },
-            { id: 'fin1', text: '💰 Get business + personal finance numbers into ChetGPT', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
-            { id: 'tm2', text: '📱 Upload Brandon meeting recording (Feb 12) from Z-Fold 7', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
-            { id: 'c13', text: '🧠 Deeper brain dump — who Aviel really is, patterns, flaws', column: 'inProgress', tag: 'setup', source: 'chet', priority: 'high' },
+            { id: 'qb1', text: 'Export QuickBooks P&L + Balance Sheet → send to ChetGPT → build real financial dashboard', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'critical' },
+            { id: 'inv1', text: 'Sent invoice to Shachar', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T02:59:00Z' },
+            { id: 'fin1', text: 'Get business + personal finance numbers into ChetGPT', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
+            { id: 'tm2', text: 'Upload Brandon meeting recording (Feb 12) from Z-Fold 7', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
+            { id: 'c13', text: 'Deeper brain dump — who Aviel really is, patterns, flaws', column: 'inProgress', tag: 'setup', source: 'chet', priority: 'high' },
 
             // === BACKLOG ===
-            { id: 'ext1', text: '📊 Extracting material costs — Lindenmeyr ✅ 28 items | Ddpmsc running (71 PDFs)', column: 'chetActive', tag: 'MIS', source: 'chet' },
-            { id: 'kanban1', text: '🔧 Kanban board: fuel gauge + filters + changelog + timestamps', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T22:49:00Z' },
+            { id: 'ext1', text: 'Extracting material costs — Lindenmeyr 28 items | Ddpmsc running (71 PDFs)', column: 'chetActive', tag: 'MIS', source: 'chet' },
+            { id: 'kanban1', text: 'Kanban board: fuel gauge + filters + changelog + timestamps', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T22:49:00Z' },
             { id: 'mis3', text: 'MIS Phase 3: Scrape 8 NDF products (Codex 5.3)', column: 'backlog', tag: 'MIS', source: 'chet' },
             { id: 'mis4', text: 'MIS Phase 4: Build pricing engine (costs + NDF 3-tier)', column: 'backlog', tag: 'MIS', source: 'chet' },
             { id: 'mis5', text: 'MIS Phase 5: Inventory + FIFO lot tracking', column: 'backlog', tag: 'MIS', source: 'chet' },
-            { id: 'llm1', text: '🧠 Set up local LLMs (Ollama) — free AI for heartbeat, extraction, simple tasks', column: 'backlog', tag: 'infra', source: 'chet', priority: 'high' },
-            { id: 'c14', text: '🔄 Reverse prompting session — unlock proactive behavior', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c16', text: '🛠️ Build custom pricing calculator skill', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c17', text: '🛠️ Build custom invoice extractor skill', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c18', text: '💬 Set up Discord as multi-agent workspace', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c19', text: '📊 Afternoon research report (printing industry trends)', column: 'backlog', tag: 'research', source: 'chet' },
-            { id: 'c20', text: '🛠️ Build customer quote generator skill', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c21', text: '🛠️ Build paper stock lookup skill', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'llm1', text: 'Set up local LLMs (Ollama) — free AI for heartbeat, extraction, simple tasks', column: 'backlog', tag: 'infra', source: 'chet', priority: 'high' },
+            { id: 'c14', text: 'Reverse prompting session — unlock proactive behavior', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c16', text: 'Build custom pricing calculator skill', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c17', text: 'Build custom invoice extractor skill', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c18', text: 'Set up Discord as multi-agent workspace', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c19', text: 'Afternoon research report (printing industry trends)', column: 'backlog', tag: 'research', source: 'chet' },
+            { id: 'c20', text: 'Build customer quote generator skill', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c21', text: 'Build paper stock lookup skill', column: 'backlog', tag: 'setup', source: 'chet' },
             { id: 'c4', text: 'Complete 5x7 NDF postcard scrape (qty 2000-5000 + double-sided)', column: 'backlog', tag: 'scraping', source: 'chet' },
             { id: 'c5', text: 'Scrape 4x6 NDF postcards (single + double sided)', column: 'backlog', tag: 'scraping', source: 'chet' },
             { id: 'c6', text: 'Scrape 6x9 NDF postcards (single + double sided)', column: 'backlog', tag: 'scraping', source: 'chet' },
@@ -1303,19 +1388,19 @@
             { id: 'c11', text: 'Set up repeatable daily execution checklist', column: 'backlog', tag: 'setup', source: 'chet' },
 
             // === DONE (older) ===
-            { id: 'd1', text: '✅ Upgraded to Opus 4.6', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd2', text: '✅ Confirmed GPT-5.2 working (Codex OAuth)', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd3', text: '✅ Configured Brave Search API', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd4', text: '✅ Installed YouTube transcript tool', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd5', text: '✅ Pulled 11 Alex Finn transcripts (55,903 words)', column: 'done', tag: 'research', source: 'chet' },
-            { id: 'd6', text: '✅ Removed broken gpt-4o-codex model', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd7', text: '✅ Updated OpenClaw to 2026.2.9', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd8', text: '✅ Set up morning brief cron (8AM Mon-Fri)', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd9', text: '✅ Built Kanban board + cost tracking', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd10', text: '✅ 5x7 postcards partial scrape (qty 25-1000)', column: 'done', tag: 'scraping', source: 'chet' },
-            { id: 'd11', text: '✅ Analyzed 11 Alex Finn transcripts (55,903 words)', column: 'done', tag: 'research', source: 'chet' },
-            { id: 'd12', text: '✅ Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
-            { id: 'd13', text: '✅ YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
+            { id: 'd1', text: 'Upgraded to Opus 4.6', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd2', text: 'Confirmed GPT-5.2 working (Codex OAuth)', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd3', text: 'Configured Brave Search API', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd4', text: 'Installed YouTube transcript tool', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd5', text: 'Pulled 11 Alex Finn transcripts (55,903 words)', column: 'done', tag: 'research', source: 'chet' },
+            { id: 'd6', text: 'Removed broken gpt-4o-codex model', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd7', text: 'Updated OpenClaw to 2026.2.9', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd8', text: 'Set up morning brief cron (8AM Mon-Fri)', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd9', text: 'Built Kanban board + cost tracking', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd10', text: '5x7 postcards partial scrape (qty 25-1000)', column: 'done', tag: 'scraping', source: 'chet' },
+            { id: 'd11', text: 'Analyzed 11 Alex Finn transcripts (55,903 words)', column: 'done', tag: 'research', source: 'chet' },
+            { id: 'd12', text: 'Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
+            { id: 'd13', text: 'YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
         ];
         // SYNC_TIMESTAMP: 2026-02-13T03:01:00Z
         // ============================================================
@@ -1384,6 +1469,49 @@
             if (!syncBtn) return;
             syncBtn.classList.add('syncing');
             setTimeout(() => syncBtn.classList.remove('syncing'), 700);
+        }
+
+        function iconSvg(name) {
+            const icons = {
+                barChart: '<path d="M4 20V11"/><path d="M10 20V6"/><path d="M16 20v-8"/><path d="M2 20h20"/>',
+                settings: '<circle cx="12" cy="12" r="3"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M5.6 18.4l1.6-1.6M16.8 7.2l1.6-1.6"/>',
+                download: '<path d="M12 4v10"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 19h16"/>',
+                search: '<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>',
+                server: '<rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7h.01M7 17h.01"/>',
+                wrench: '<path d="M21 7.5a5 5 0 0 1-6.8 4.6L7.6 18.7a2 2 0 0 1-2.8-2.8l6.6-6.6A5 5 0 0 1 16 2.5l-2.3 2.3 2.5 2.5L18.5 5A5 5 0 0 1 21 7.5Z"/>',
+                clipboard: '<rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4.5h6v3H9z"/>',
+                coin: '<circle cx="12" cy="12" r="8"/><path d="M14.8 9.2c-.6-.7-1.6-1.2-2.8-1.2-1.7 0-3 .9-3 2.2 0 1.2 1 1.9 2.7 2.2l.7.1c1.6.3 2.4.8 2.4 2 0 1.3-1.2 2.2-3 2.2-1.5 0-2.6-.5-3.3-1.4"/><path d="M12 7v10"/>',
+                phone: '<rect x="8" y="3" width="8" height="18" rx="2"/><path d="M11 18h2"/>',
+                bulb: '<path d="M8.2 14.2c-1.3-1-2.2-2.7-2.2-4.6A6 6 0 0 1 12 3.6a6 6 0 0 1 6 6c0 2-.9 3.7-2.2 4.7-.6.5-.9 1-.9 1.7H9.1c0-.7-.3-1.2-.9-1.8Z"/><path d="M9.8 18h4.4"/><path d="M10.3 20h3.4"/>',
+                refresh: '<path d="M20 6v5h-5"/><path d="M4 18v-5h5"/><path d="M19 11a7 7 0 0 0-12-4"/><path d="M5 13a7 7 0 0 0 12 4"/>',
+                tools: '<path d="M14 6l4 4"/><path d="M5 19l6-6"/><path d="M4 20l3-3"/><path d="M14.5 4.5l5 5"/><path d="M9 7l8 8"/>',
+                chat: '<path d="M4 5h16v10H9l-5 4V5Z"/>',
+                calendar: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/>',
+                checkCircle: '<circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity="0.18"/><circle cx="12" cy="12" r="9"/><path d="m8.3 12.2 2.5 2.5 4.9-4.9"/>'
+            };
+            const body = icons[name] || icons.settings;
+            return `<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
+        }
+
+        function renderTaskTextWithIcons(text) {
+            return (text || '')
+                .split(TASK_EMOJI_REGEX)
+                .filter(part => part !== '')
+                .map(part => {
+                    const iconName = EMOJI_ICON_MAP[part];
+                    if (iconName) {
+                        const cls = iconName === 'checkCircle' ? 'task-inline-icon check' : 'task-inline-icon';
+                        return `<span class="${cls}">${iconSvg(iconName)}</span>`;
+                    }
+                    return escapeHtml(part);
+                })
+                .join('')
+                .trim();
+        }
+
+        function getTagIcon(tag) {
+            const iconName = TAG_ICON_MAP[tag] || 'settings';
+            return iconSvg(iconName);
         }
 
         function syncTasks() {
@@ -1522,10 +1650,19 @@
             else if (task.priority === 'high') el.classList.add('priority-high');
             const tagClass = 'tag-' + (task.tag || 'setup');
             const tagLabel = task.tag || 'setup';
-            const priorityBadge = task.priority === 'critical' ? '<span class="priority-badge-critical">⭐ CRITICAL</span>' : task.priority === 'high' ? '<span class="priority-badge">HIGH</span>' : '';
+            const priorityBadge = task.priority === 'critical' ? '<span class="priority-badge-critical">CRITICAL</span>' : task.priority === 'high' ? '<span class="priority-badge">HIGH</span>' : '';
+            const tagIcon = getTagIcon(task.tag || 'setup');
+            const taskText = renderTaskTextWithIcons(task.text);
             let timeStamp = '';
-            if (task.completedAt) { const d = new Date(task.completedAt); if (!isNaN(d.getTime())) { const ts = d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}); const ds = d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); timeStamp = `<span style="color:var(--text-muted);font-size:10px;margin-left:6px;">✅ ${ds} ${ts}</span>`; } }
-            el.innerHTML = `<span class="task-text">${escapeHtml(task.text)}${priorityBadge}</span><button class="delete-btn" title="Delete">×</button><div class="task-meta"><span class="task-tag ${tagClass}">${tagLabel}</span>${timeStamp}</div>`;
+            if (task.completedAt) {
+                const d = new Date(task.completedAt);
+                if (!isNaN(d.getTime())) {
+                    const ts = d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+                    const ds = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+                    timeStamp = `<span class="task-meta-time"><span class="task-meta-icon check">${iconSvg('checkCircle')}</span>${ds} ${ts}</span>`;
+                }
+            }
+            el.innerHTML = `<span class="task-text"><span class="task-text-row"><span class="task-leading-icon">${tagIcon}</span><span class="task-text-content">${taskText}${priorityBadge}</span></span></span><button class="delete-btn" title="Delete">×</button><div class="task-meta"><span class="task-tag ${tagClass}">${tagLabel}</span>${timeStamp}</div>`;
             el.querySelector('.delete-btn').addEventListener('click', (e) => { e.stopPropagation(); deleteTask(task.id); });
             el.addEventListener('dragstart', function(e) { draggedTask = this; this.classList.add('dragging'); e.dataTransfer.setData('text/plain', this.dataset.id); });
             el.addEventListener('dragend', function() { this.classList.remove('dragging'); draggedTask = null; });
