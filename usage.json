@@ -1,6 +1,6 @@
 {
   "session": {
-    "pct": 8,
+    "pct": 12,
     "resetIn": 5,
     "note": "Fresh session — from screenshot 9:13 PM"
   },
@@ -21,6 +21,6 @@
     "low": 0,
     "note": "Today's exchanges by thinking level"
   },
-  "updatedAt": "2026-02-13T03:01:00Z",
+  "updatedAt": "2026-02-13T03:16:00Z",
   "updatedBy": "gauge-cron"
 }
