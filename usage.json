@@ -1,8 +1,8 @@
 {
   "session": {
-    "pct": 1,
-    "resetIn": "4h 15min",
-    "note": "Codex 5.2 thinking \u2014 5h 99% left"
+    "pct": 52,
+    "resetIn": "Context 208k/400k",
+    "note": "Session bar now tracks context fullness; Claude account snapshot still needs screenshot if you want that view."
   },
   "weekly": {
     "pct": 81,
@@ -10,7 +10,7 @@
     "note": "All models"
   },
   "model": {
-    "active": "Codex 5.2",
+    "active": "Opus 4.6",
     "status": "ok",
     "fallback": null
   },
@@ -21,6 +21,6 @@
     "low": 0,
     "note": "Today's exchanges by thinking level"
   },
-  "updatedAt": "2026-02-12T20:49:12-0500",
+  "updatedAt": "2026-02-12T21:12:37-0500",
   "updatedBy": "ChetGPT"
 }
