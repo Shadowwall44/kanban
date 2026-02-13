@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>ChetGPT Work Board</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1782,7 +1785,7 @@
                 if(data.thinking){document.querySelector('#thinkHigh .pill-count').textContent=data.thinking.high||0;document.querySelector('#thinkMed .pill-count').textContent=data.thinking.medium||0;document.querySelector('#thinkLow .pill-count').textContent=data.thinking.low||0;const a=document.getElementById('thinkActive');if(data.thinking.current)a.textContent='▸ Now: '+data.thinking.current;}
                 const u=document.getElementById('fuelUpdated');if(data.updatedAt){const d=new Date(data.updatedAt);u.textContent='⏱ '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});u.title='Last updated by '+(data.updatedBy||'ChetGPT');}
             }
-            async function fetchFuel(){try{const r=await fetch('usage.json?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;renderFuel(await r.json());}catch(e){}}
+            async function fetchFuel(){try{const r=await fetch(`usage.json?t=${Date.now()}`,{cache:'no-store'});if(!r.ok)return;renderFuel(await r.json());}catch(e){}}
             fetchFuel();setInterval(fetchFuel,FUEL_INTERVAL);
         })();
 
