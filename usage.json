@@ -1,8 +1,8 @@
 {
   "session": {
-    "pct": 39,
-    "resetIn": "3hr 23min",
-    "note": "Current session"
+    "pct": 99,
+    "resetIn": "4h 34min",
+    "note": "Context 200k/200k; switched to Codex fallback"
   },
   "weekly": {
     "pct": 81,
@@ -10,8 +10,8 @@
     "note": "All models"
   },
   "model": {
-    "active": "Opus 4.6",
-    "status": "ok",
+    "active": "Codex 5.1 Mini",
+    "status": "switching",
     "fallback": null
   },
   "thinking": {
@@ -21,6 +21,6 @@
     "low": 0,
     "note": "Today's exchanges by thinking level"
   },
-  "updatedAt": "2026-02-12T17:36:00-05:00",
+  "updatedAt": "2026-02-12T20:29:54-0500",
   "updatedBy": "ChetGPT"
 }
