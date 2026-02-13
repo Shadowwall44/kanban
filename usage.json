@@ -1,8 +1,8 @@
 {
   "session": {
-    "pct": 34,
-    "resetIn": "3hr 35min",
-    "note": "Calibrated from screenshot 10:25 PM \u2014 1.89%/exchange"
+    "pct": 38,
+    "resetIn": "3hr 42min",
+    "note": "Calibrated from screenshot 10:25 PM — 1.89%/exchange"
   },
   "weekly": {
     "pct": 89,
@@ -21,6 +21,6 @@
     "low": 0,
     "note": "Today's exchanges by thinking level"
   },
-  "updatedAt": "2026-02-12T22:25:50-0500",
-  "updatedBy": "ChetGPT (from screenshot)"
+  "updatedAt": "2026-02-12T22:31:00-0500",
+  "updatedBy": "gauge-cron"
 }
