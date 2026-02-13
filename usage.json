@@ -1,15 +1,15 @@
 {
   "session": {
-    "pct": 88,
-    "resetIn": 5,
-    "note": "Calibrated from screenshot 10:25 PM — 1.89%/exchange"
+    "pct": 85,
+    "resetIn": 2.5,
+    "note": "Calibrated from screenshot 11:29 PM — 1.7%/exchange"
   },
   "weekly": {
-    "pct": 91,
+    "pct": 93,
     "resetAt": "Mon 1:00 PM",
     "note": "All models"
   },
-  "weeklyPct": 91,
+  "weeklyPct": 93,
   "model": {
     "active": "Opus 4.6",
     "status": "ok",
@@ -17,11 +17,11 @@
   },
   "thinking": {
     "current": "high",
-    "high": 32,
+    "high": 34,
     "medium": 2,
     "low": 0,
     "note": "Today's exchanges by thinking level"
   },
-  "updatedAt": "2026-02-12T23:31:00-05:00",
-  "updatedBy": "gauge-cron"
+  "updatedAt": "2026-02-12T23:33:00-05:00",
+  "updatedBy": "opus-direct"
 }
