@@ -1343,66 +1343,64 @@
         // Tags: setup, scraping, research, MIS, infra
         // ============================================================
         const CHET_TASKS = [
-            // === DONE (today) ===
-            { id: 'c1', text: 'Verified session memory search is enabled', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T19:00:00Z' },
-            { id: 'vault1', text: 'Read & analyzed INKredible Vault (116 files) — full business context loaded', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-12T20:30:00Z' },
-            { id: 'mis1', text: 'MIS Phase 1: Extractor + 164 PDFs + Vault pulled into workspace', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-12T21:20:00Z' },
-            { id: 'gh1', text: 'Deploy Kanban to GitHub Pages', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T20:44:00Z' },
-            { id: 'gh2', text: 'INKredible Extractor on GitHub — pulled to workspace', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T21:15:00Z' },
-            { id: 'c15', text: 'Install Codex CLI v0.101.0 as coding muscle', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T21:30:00Z' },
-            { id: 'c12', text: 'Install jq 1.7.1 + ripgrep 14.1.1', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T21:32:00Z' },
-            { id: 'c9', text: 'Configure memory search (Google Gemini embeddings)', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T19:30:00Z' },
-            { id: 'fuel1', text: 'Built fuel gauge — live usage tracker on Kanban board', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T22:08:00Z' },
-
-            // === CHETGPT ACTIVE (working on right now) ===
-            { id: 'mis2', text: 'MIS Phase 2: Get Extractor running (npm install + dev server + test PDFs)', column: 'chetActive', tag: 'MIS', source: 'chet' },
-            { id: 'tm1', text: 'Review team meeting transcript (Feb 9) — cash flow analysis with vault context', column: 'chetActive', tag: 'MIS', source: 'chet', priority: 'high' },
+            // === CHETGPT ACTIVE (working on RIGHT NOW) ===
+            { id: 'kb32', text: 'Kanban v3.2: floating pill bar + SVG line icons (Codex building)', column: 'chetActive', tag: 'infra', source: 'chet' },
+            { id: 'ext_cron', text: 'Invoice extraction — 6AM cron set, 123 PDFs remaining (overnight)', column: 'chetActive', tag: 'MIS', source: 'chet' },
 
             // === IN PROGRESS (waiting on Aviel) ===
-            { id: 'qb1', text: 'Export QuickBooks P&L + Balance Sheet → send to ChetGPT → build real financial dashboard', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'critical' },
-            { id: 'inv1', text: 'Sent invoice to Shachar', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T02:59:00Z' },
+            { id: 'qb1', text: 'Export QuickBooks P&L + Balance Sheet — build financial dashboard', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'critical' },
             { id: 'fin1', text: 'Get business + personal finance numbers into ChetGPT', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
             { id: 'tm2', text: 'Upload Brandon meeting recording (Feb 12) from Z-Fold 7', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'high' },
-            { id: 'c13', text: 'Deeper brain dump — who Aviel really is, patterns, flaws', column: 'inProgress', tag: 'setup', source: 'chet', priority: 'high' },
+            { id: 'c13', text: 'Brain dump conversation — who Aviel really is, patterns, goals', column: 'inProgress', tag: 'setup', source: 'chet', priority: 'high' },
+            { id: 'cron_model', text: 'Switch all cron jobs to Codex 5.3 (save Opus for conversations)', column: 'inProgress', tag: 'infra', source: 'chet', priority: 'high' },
+            { id: 'wispr1', text: 'Review Wispr Flow repos when Aviel pushes', column: 'inProgress', tag: 'research', source: 'chet' },
 
             // === BACKLOG ===
-            { id: 'ext1', text: 'Extracting material costs — Lindenmeyr 28 items | Ddpmsc running (71 PDFs)', column: 'chetActive', tag: 'MIS', source: 'chet' },
-            { id: 'kanban1', text: 'Kanban board: fuel gauge + filters + changelog + timestamps', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T22:49:00Z' },
-            { id: 'mis3', text: 'MIS Phase 3: Scrape 8 NDF products (Codex 5.3)', column: 'backlog', tag: 'MIS', source: 'chet' },
-            { id: 'mis4', text: 'MIS Phase 4: Build pricing engine (costs + NDF 3-tier)', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'kb_personal', text: 'Apply Origin redesign to personal.html', column: 'backlog', tag: 'infra', source: 'chet' },
+            { id: 'mis2', text: 'MIS Phase 2: Get Extractor running', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'mis3', text: 'MIS Phase 3: Scrape 8 NDF products', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'mis4', text: 'MIS Phase 4: Build pricing engine', column: 'backlog', tag: 'MIS', source: 'chet' },
             { id: 'mis5', text: 'MIS Phase 5: Inventory + FIFO lot tracking', column: 'backlog', tag: 'MIS', source: 'chet' },
-            { id: 'llm1', text: 'Set up local LLMs (Ollama) — free AI for heartbeat, extraction, simple tasks', column: 'backlog', tag: 'infra', source: 'chet', priority: 'high' },
-            { id: 'c14', text: 'Reverse prompting session — unlock proactive behavior', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c16', text: 'Build custom pricing calculator skill', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c17', text: 'Build custom invoice extractor skill', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c18', text: 'Set up Discord as multi-agent workspace', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c19', text: 'Afternoon research report (printing industry trends)', column: 'backlog', tag: 'research', source: 'chet' },
-            { id: 'c20', text: 'Build customer quote generator skill', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c21', text: 'Build paper stock lookup skill', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c4', text: 'Complete 5x7 NDF postcard scrape (qty 2000-5000 + double-sided)', column: 'backlog', tag: 'scraping', source: 'chet' },
-            { id: 'c5', text: 'Scrape 4x6 NDF postcards (single + double sided)', column: 'backlog', tag: 'scraping', source: 'chet' },
-            { id: 'c6', text: 'Scrape 6x9 NDF postcards (single + double sided)', column: 'backlog', tag: 'scraping', source: 'chet' },
-            { id: 'c7', text: 'Find NDF internal pricing API (bypass slow browser)', column: 'backlog', tag: 'research', source: 'chet' },
-            { id: 'c8', text: 'Fund DeepSeek API ($5 at platform.deepseek.com)', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c10', text: 'Create unified OpenClaw command aliases + shortcuts', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c11', text: 'Set up repeatable daily execution checklist', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'quote1', text: 'Instant quote drafting (text specs to 3-tier quote)', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'comp1', text: 'Weekly competitor price watch (NDF, VistaPrint)', column: 'backlog', tag: 'research', source: 'chet' },
+            { id: 'postmortem1', text: 'Job profit post-mortem system', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'team_brief', text: 'Brandon and Diandra daily task briefings', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'followup1', text: 'Customer follow-up machine (thank-you + review requests)', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'seasonal1', text: 'Seasonal prep alerts (graduation, wedding, holiday)', column: 'backlog', tag: 'research', source: 'chet' },
+            { id: 'email1', text: 'Email monitoring + daily inbox summary', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'skill6', text: 'Build frontend design skill', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c16', text: 'Build pricing calculator skill', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c17', text: 'Build invoice extractor skill', column: 'backlog', tag: 'setup', source: 'chet' },
+            { id: 'c4', text: 'Complete 5x7 NDF postcard scrape (qty 2000-5000)', column: 'backlog', tag: 'scraping', source: 'chet' },
+            { id: 'c5', text: 'Scrape 4x6 NDF postcards', column: 'backlog', tag: 'scraping', source: 'chet' },
+            { id: 'c6', text: 'Scrape 6x9 NDF postcards', column: 'backlog', tag: 'scraping', source: 'chet' },
+            { id: 'c7', text: 'Find NDF internal pricing API', column: 'backlog', tag: 'research', source: 'chet' },
 
-            // === DONE (older) ===
+            // === DONE (today — Feb 12) ===
+            { id: 'kb31', text: 'Kanban v3.1: light/dark toggle + deeper shadows', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T03:55:00Z' },
+            { id: 'kb30', text: 'Kanban v3: Origin light mode redesign', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T03:15:00Z' },
+            { id: 'kb20', text: 'Kanban v2: Origin dark mode redesign', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T03:00:00Z' },
+            { id: 'firecrawl1', text: 'Firecrawl: scraped 4 Origin Financial pages', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T03:30:00Z' },
+            { id: 'transcript_all', text: 'Reviewed all 11 Alex Finn transcripts (55,903 words)', column: 'done', tag: 'research', source: 'chet', completedAt: '2026-02-13T03:42:00Z' },
+            { id: 'cron_setup', text: 'Set up 4 crons: journaling 5PM, extraction 6AM, research 2PM, nightly 1AM', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T03:39:00Z' },
+            { id: 'inv1', text: 'Sent invoice to Shachar', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T02:59:00Z' },
+            { id: 'fuel1', text: 'Built fuel gauge + usage tracker (auto cron every 15min)', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T22:08:00Z' },
+            { id: 'kanban1', text: 'Kanban features: filters, changelog, timestamps, stats bar', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T22:49:00Z' },
+            { id: 'extract_lm', text: 'Extracted Lindenmeyr invoices — 28 items from 15 PDFs', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T01:00:00Z' },
+            { id: 'extract_dd', text: 'Partial Ddpmsc extraction — 89 items from 21 PDFs', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T01:30:00Z' },
+            { id: 'mis1', text: 'MIS Phase 1: Extractor + 164 PDFs + Vault pulled', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-12T21:20:00Z' },
+            { id: 'vault1', text: 'Read & analyzed INKredible Vault (116 files)', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-12T20:30:00Z' },
+            { id: 'gh1', text: 'Deploy Kanban to GitHub Pages', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T20:44:00Z' },
+            { id: 'c1', text: 'Memory search enabled (Gemini embeddings)', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T19:30:00Z' },
+            { id: 'c15', text: 'Install Codex CLI + jq + ripgrep', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T21:32:00Z' },
             { id: 'd1', text: 'Upgraded to Opus 4.6', column: 'done', tag: 'setup', source: 'chet' },
             { id: 'd2', text: 'Confirmed GPT-5.2 working (Codex OAuth)', column: 'done', tag: 'setup', source: 'chet' },
             { id: 'd3', text: 'Configured Brave Search API', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd4', text: 'Installed YouTube transcript tool', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd5', text: 'Pulled 11 Alex Finn transcripts (55,903 words)', column: 'done', tag: 'research', source: 'chet' },
-            { id: 'd6', text: 'Removed broken gpt-4o-codex model', column: 'done', tag: 'setup', source: 'chet' },
             { id: 'd7', text: 'Updated OpenClaw to 2026.2.9', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd8', text: 'Set up morning brief cron (8AM Mon-Fri)', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd9', text: 'Built Kanban board + cost tracking', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd10', text: '5x7 postcards partial scrape (qty 25-1000)', column: 'done', tag: 'scraping', source: 'chet' },
-            { id: 'd11', text: 'Analyzed 11 Alex Finn transcripts (55,903 words)', column: 'done', tag: 'research', source: 'chet' },
-            { id: 'd12', text: 'Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
-            { id: 'd13', text: 'YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
+            { id: 'd8', text: 'Morning brief cron (8AM Mon-Fri)', column: 'done', tag: 'setup', source: 'chet' },
+            { id: 'd10', text: '5x7 postcards partial scrape (qty 25-1000)', column: 'done', tag: 'scraping', source: 'chet' }
         ];
-        // SYNC_TIMESTAMP: 2026-02-13T03:01:00Z
+        // SYNC_TIMESTAMP: 2026-02-13T03:58:00Z
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', () => {
