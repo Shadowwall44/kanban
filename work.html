@@ -4,38 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚡ ChetGPT Work Board</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --bg: #0f0f23;
-            --panel: #18181b;
-            --panel-2: #27272a;
-            --text: #e4e4e7;
-            --muted: #a1a1aa;
-            --subtle: #71717a;
-            --accent: #6366f1;
-            --accent-hover: #4f46e5;
-            --danger: #ef4444;
+            --bg: #0f1011;
+            --bg-elevated: rgba(255,255,255,0.03);
+            --panel: rgba(255,255,255,0.04);
+            --panel-hover: rgba(255,255,255,0.07);
+            --panel-border: rgba(255,255,255,0.08);
+            --panel-border-hover: rgba(255,255,255,0.14);
+            --text: #f5f5f7;
+            --text-secondary: rgba(255,255,255,0.6);
+            --text-muted: rgba(255,255,255,0.38);
+            --text-subtle: rgba(255,255,255,0.2);
+            --accent: #00B3DD;
+            --accent-soft: rgba(0,179,221,0.15);
+            --accent-border: rgba(0,179,221,0.3);
+            --accent-glow: rgba(0,179,221,0.2);
+            --purple: #847DFF;
+            --purple-soft: rgba(132,125,255,0.12);
+            --purple-border: rgba(132,125,255,0.25);
+            --teal: #01A89E;
+            --amber: #D4A853;
+            --rose: #DD9098;
+            --green: #4ADE80;
+            --red: #F87171;
+            --font-display: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --radius: 14px;
+            --radius-sm: 10px;
+            --radius-xs: 6px;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: var(--font-body);
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            padding: 20px;
+            padding: 24px;
+            -webkit-font-smoothing: antialiased;
         }
-        .container { max-width: 1600px; margin: 0 auto; }
+        /* Subtle gradient overlay at top */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 400px;
+            background: radial-gradient(ellipse at 50% -20%, rgba(0,179,221,0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container { max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; }
+
+        /* === HEADER === */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 14px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--panel-2);
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--panel-border);
         }
-        h1 { font-size: 24px; font-weight: 700; color: #f4f4f5; }
-        .last-sync { font-size: 11px; color: #52525b; }
+        h1 {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 400;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }
+        h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+        .last-sync { font-size: 11px; color: var(--text-muted); letter-spacing: 0.02em; }
 
         .header-actions {
             display: flex;
@@ -44,254 +88,250 @@
         }
         #taskInput, #tagSelect {
             padding: 10px 14px;
-            font-size: 14px;
-            border: 1px solid #3f3f46;
-            border-radius: 10px;
+            font-size: 13px;
+            font-family: var(--font-body);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--radius-sm);
             background: var(--panel);
             color: var(--text);
             outline: none;
+            backdrop-filter: blur(12px);
+            transition: all 0.25s ease;
         }
         #taskInput { width: 280px; }
+        #taskInput::placeholder { color: var(--text-muted); }
         #taskInput:focus, #tagSelect:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 0 3px var(--accent-soft);
         }
-        #tagSelect { cursor: pointer; font-size: 13px; }
+        #tagSelect { cursor: pointer; }
 
         .btn {
             padding: 10px 18px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
+            font-family: var(--font-body);
             border: none;
-            border-radius: 10px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
+            letter-spacing: 0.01em;
         }
         .btn-primary {
-            background: var(--accent);
+            background: linear-gradient(135deg, var(--accent), #0098B8);
             color: white;
-            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.25);
+            box-shadow: 0 4px 16px var(--accent-glow);
         }
-        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
         .btn-sync {
-            background: #059669;
-            color: white;
+            background: var(--panel);
+            color: var(--text-secondary);
             font-size: 12px;
             padding: 8px 14px;
+            border: 1px solid var(--panel-border);
         }
-        .btn-sync:hover { background: #047857; }
+        .btn-sync:hover { background: var(--panel-hover); color: var(--text); }
 
+        /* === STATS BAR === */
         .stats-bar {
             display: flex;
             justify-content: center;
-            gap: 25px;
-            padding: 10px 20px;
+            gap: 32px;
+            padding: 12px 24px;
             background: var(--panel);
-            border-radius: 10px;
-            border: 1px solid var(--panel-2);
+            border-radius: var(--radius);
+            border: 1px solid var(--panel-border);
             margin-bottom: 20px;
+            backdrop-filter: blur(12px);
         }
-        .stat-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
-        .stat-value { font-weight: 700; color: var(--text); }
-        .stat-label { font-size: 12px; color: var(--subtle); }
+        .stat-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .stat-value { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+        .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
 
+        /* === BOARD === */
         .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
         .column {
             background: var(--panel);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: var(--radius);
+            padding: 18px;
             min-height: 420px;
-            border: 1px solid var(--panel-2);
+            border: 1px solid var(--panel-border);
+            backdrop-filter: blur(12px);
+            transition: border-color 0.3s ease;
         }
+        .column:hover { border-color: var(--panel-border-hover); }
         .column-header {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--panel-2);
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--panel-border);
         }
-        .column-icon { width: 10px; height: 10px; border-radius: 50%; }
-        .column-title { font-size: 14px; font-weight: 700; flex: 1; }
-        .task-count {
-            font-size: 12px;
-            color: var(--subtle);
-            background: var(--panel-2);
-            padding: 3px 8px;
-            border-radius: 10px;
+        .column-icon {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
-        .column-header.toggleable {
-            cursor: pointer;
-            user-select: none;
-        }
-        .column-title-group {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
+        .column-title {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 400;
             flex: 1;
-            min-width: 0;
+            color: var(--text);
         }
-        .column-subtitle {
+        .task-count {
             font-size: 11px;
-            color: var(--subtle);
+            font-weight: 700;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.06);
+            padding: 3px 9px;
+            border-radius: 10px;
+            font-variant-numeric: tabular-nums;
         }
-        .chevron {
-            font-size: 11px;
-            color: var(--subtle);
-            width: 12px;
-            text-align: center;
-            transition: transform 0.2s ease;
-        }
+        .column-header.toggleable { cursor: pointer; user-select: none; }
+        .column-title-group { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+        .column-subtitle { font-size: 11px; color: var(--text-muted); font-family: var(--font-body); }
+        .chevron { font-size: 10px; color: var(--text-muted); width: 12px; text-align: center; transition: transform 0.2s ease; }
         .column-body {
             overflow: hidden;
-            transition: max-height 0.25s ease, opacity 0.25s ease, margin-top 0.25s ease;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
             max-height: 1600px;
             opacity: 1;
         }
-        .column-body.collapsed {
-            max-height: 0;
-            opacity: 0;
-            margin-top: 0;
-            pointer-events: none;
-        }
+        .column-body.collapsed { max-height: 0; opacity: 0; pointer-events: none; }
         .toggle-link {
-            margin-top: 10px;
+            margin-top: 12px;
             font-size: 12px;
-            color: var(--muted);
+            color: var(--text-secondary);
             background: transparent;
             border: none;
             cursor: pointer;
             padding: 0;
             text-align: left;
+            font-family: var(--font-body);
+            transition: color 0.2s;
         }
-        .toggle-link:hover { color: var(--text); }
+        .toggle-link:hover { color: var(--accent); }
 
-        .backlog .column-icon { background: #f59e0b; }
-        .in-progress .column-icon { background: #3b82f6; }
-        .chet-active .column-icon { background: #a855f7; animation: pulse 2s infinite; }
-        .done .column-icon { background: #22c55e; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        /* Column accent colors */
+        .backlog .column-icon { background: var(--amber); box-shadow: 0 0 8px rgba(212,168,83,0.3); }
+        .in-progress .column-icon { background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+        .chet-active .column-icon { background: var(--purple); box-shadow: 0 0 8px rgba(132,125,255,0.3); animation: iconPulse 2.5s ease-in-out infinite; }
+        .done .column-icon { background: var(--green); box-shadow: 0 0 8px rgba(74,222,128,0.3); }
+        @keyframes iconPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
+        /* === TASK CARDS === */
         .tasks { display: flex; flex-direction: column; gap: 10px; min-height: 320px; }
         .task {
-            background: var(--panel-2);
-            border-radius: 10px;
-            padding: 12px 14px;
+            background: rgba(255,255,255,0.03);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
             cursor: grab;
             position: relative;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-            border-left: 3px solid #a855f7;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-left: 3px solid var(--purple);
         }
         .task:hover {
-            background: #3f3f46;
-            transform: translateY(-1px);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
         }
-        .task.dragging { opacity: 0.5; }
+        .task.dragging { opacity: 0.4; }
 
-        /* Glowing effect for tasks in ChetGPT Active column */
+        /* ChetGPT Active column glow */
         .chet-active .task {
-            border-left: 3px solid #a855f7;
-            animation: taskGlow 2.5s ease-in-out infinite;
+            border-left: 3px solid var(--purple);
+            animation: activeGlow 3s ease-in-out infinite;
         }
-        @keyframes taskGlow {
-            0%, 100% {
-                box-shadow: 0 0 5px rgba(168, 85, 247, 0.15), 0 0 10px rgba(168, 85, 247, 0.08);
-            }
-            50% {
-                box-shadow: 0 0 15px rgba(168, 85, 247, 0.4), 0 0 30px rgba(168, 85, 247, 0.2), 0 0 45px rgba(168, 85, 247, 0.1);
-            }
+        @keyframes activeGlow {
+            0%, 100% { box-shadow: 0 0 4px rgba(132,125,255,0.08); }
+            50% { box-shadow: 0 0 16px rgba(132,125,255,0.2), 0 0 32px rgba(132,125,255,0.08); }
         }
-        .chet-active .task:hover {
-            animation: none;
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 8px 18px rgba(0, 0, 0, 0.25);
-        }
+        .chet-active .task:hover { animation: none; box-shadow: 0 0 20px rgba(132,125,255,0.3), 0 8px 24px rgba(0,0,0,0.3); }
 
-        /* CRITICAL PRIORITY — gold glow + star badge, always top */
+        /* CRITICAL PRIORITY */
         .task.priority-critical {
-            border-left: 3px solid #f59e0b;
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), var(--panel-2));
-            animation: criticalGlow 2.5s ease-in-out infinite;
+            border-left: 3px solid var(--amber);
+            background: linear-gradient(135deg, rgba(212,168,83,0.08), rgba(255,255,255,0.03));
+            animation: criticalGlow 3s ease-in-out infinite;
         }
         @keyframes criticalGlow {
-            0%, 100% { box-shadow: 0 0 8px rgba(245, 158, 11, 0.15); }
-            50% { box-shadow: 0 0 18px rgba(245, 158, 11, 0.45), 0 0 35px rgba(245, 158, 11, 0.15); }
+            0%, 100% { box-shadow: 0 0 6px rgba(212,168,83,0.1); }
+            50% { box-shadow: 0 0 16px rgba(212,168,83,0.25), 0 0 32px rgba(212,168,83,0.08); }
         }
-        .task.priority-critical:hover {
-            animation: none;
-            box-shadow: 0 0 25px rgba(245, 158, 11, 0.5), 0 8px 18px rgba(0, 0, 0, 0.25);
-        }
+        .task.priority-critical:hover { animation: none; box-shadow: 0 0 24px rgba(212,168,83,0.3), 0 8px 24px rgba(0,0,0,0.3); }
         .priority-badge-critical {
             display: inline-block;
             font-size: 9px;
-            font-weight: 800;
-            padding: 1px 6px;
-            border-radius: 4px;
-            background: linear-gradient(135deg, #b45309, #d97706);
-            color: #fef3c7;
-            letter-spacing: 0.5px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: var(--radius-xs);
+            background: linear-gradient(135deg, rgba(212,168,83,0.2), rgba(212,168,83,0.1));
+            border: 1px solid rgba(212,168,83,0.3);
+            color: var(--amber);
+            letter-spacing: 0.04em;
             margin-left: 6px;
             vertical-align: middle;
         }
 
-        /* HIGH PRIORITY — red glow + badge, always floats to top */
+        /* HIGH PRIORITY */
         .task.priority-high {
-            border-left: 3px solid #ef4444;
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), var(--panel-2));
-            animation: highPriorityGlow 3s ease-in-out infinite;
+            border-left: 3px solid var(--rose);
+            background: linear-gradient(135deg, rgba(221,144,152,0.06), rgba(255,255,255,0.03));
+            animation: highGlow 3.5s ease-in-out infinite;
         }
-        .chet-active .task.priority-high {
-            animation: highPriorityGlow 3s ease-in-out infinite, taskGlow 2.5s ease-in-out infinite;
+        .chet-active .task.priority-high { animation: highGlow 3.5s ease-in-out infinite; }
+        @keyframes highGlow {
+            0%, 100% { box-shadow: 0 0 4px rgba(221,144,152,0.08); }
+            50% { box-shadow: 0 0 12px rgba(221,144,152,0.2), 0 0 24px rgba(221,144,152,0.06); }
         }
-        @keyframes highPriorityGlow {
-            0%, 100% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.1); }
-            50% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.3), 0 0 25px rgba(239, 68, 68, 0.12); }
-        }
-        .task.priority-high:hover {
-            animation: none;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4), 0 8px 18px rgba(0, 0, 0, 0.25);
-        }
+        .task.priority-high:hover { animation: none; box-shadow: 0 0 20px rgba(221,144,152,0.25), 0 8px 24px rgba(0,0,0,0.3); }
         .priority-badge {
             display: inline-block;
             font-size: 9px;
-            font-weight: 800;
-            padding: 1px 6px;
-            border-radius: 4px;
-            background: #991b1b;
-            color: #fca5a5;
-            letter-spacing: 0.5px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: var(--radius-xs);
+            background: rgba(221,144,152,0.12);
+            border: 1px solid rgba(221,144,152,0.25);
+            color: var(--rose);
+            letter-spacing: 0.04em;
             margin-left: 6px;
             vertical-align: middle;
         }
-        .task-text { font-size: 13px; line-height: 1.45; word-break: break-word; padding-right: 20px; }
 
+        .task-text { font-size: 13px; line-height: 1.5; word-break: break-word; padding-right: 22px; color: var(--text); }
         .task-tag {
             display: inline-block;
             font-size: 10px;
-            padding: 2px 7px;
+            padding: 2px 8px;
             border-radius: 999px;
-            margin-top: 6px;
-            font-weight: 700;
-            letter-spacing: 0.2px;
+            margin-top: 8px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            border: 1px solid transparent;
         }
-        .tag-setup { background: #1c4532; color: #86efac; }
-        .tag-scraping { background: #713f12; color: #fde047; }
-        .tag-research { background: #4c1d95; color: #c4b5fd; }
-        .tag-MIS { background: #1e3a5f; color: #93c5fd; }
-        .tag-infra { background: #7c2d12; color: #fdba74; }
+        .tag-setup { background: rgba(74,222,128,0.1); color: #6ee7a0; border-color: rgba(74,222,128,0.2); }
+        .tag-scraping { background: rgba(250,204,21,0.1); color: #fde68a; border-color: rgba(250,204,21,0.2); }
+        .tag-research { background: rgba(132,125,255,0.1); color: #b4b0ff; border-color: rgba(132,125,255,0.2); }
+        .tag-MIS { background: rgba(0,179,221,0.1); color: #67d8f0; border-color: rgba(0,179,221,0.2); }
+        .tag-infra { background: rgba(212,168,83,0.1); color: #e8c97a; border-color: rgba(212,168,83,0.2); }
 
         .delete-btn {
             position: absolute;
-            top: 6px;
-            right: 6px;
-            width: 22px;
-            height: 22px;
+            top: 8px; right: 8px;
+            width: 22px; height: 22px;
             border: none;
             background: transparent;
-            color: var(--subtle);
+            color: var(--text-muted);
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: var(--radius-xs);
             font-size: 16px;
             opacity: 0;
             transition: all 0.2s;
@@ -300,229 +340,182 @@
             justify-content: center;
         }
         .task:hover .delete-btn { opacity: 1; }
-        .delete-btn:hover { background: var(--danger); color: white; }
-
-        .task-meta { margin-top: 6px; font-size: 11px; color: #52525b; }
-        .empty-state { text-align: center; padding: 30px 15px; color: #52525b; font-size: 13px; }
+        .delete-btn:hover { background: rgba(248,113,113,0.15); color: var(--red); }
+        .task-meta { margin-top: 8px; font-size: 11px; color: var(--text-muted); }
+        .empty-state { text-align: center; padding: 40px 15px; color: var(--text-muted); font-size: 13px; font-style: italic; }
 
         /* === FUEL GAUGE === */
         .fuel-gauge {
             display: flex;
             align-items: center;
             gap: 20px;
-            padding: 10px 16px;
-            background: linear-gradient(135deg, #18181b 0%, #1e1b2e 100%);
-            border-radius: 10px;
-            border: 1px solid #2d2a3e;
+            padding: 12px 18px;
+            background: var(--panel);
+            border-radius: var(--radius);
+            border: 1px solid var(--panel-border);
             margin-bottom: 16px;
             flex-wrap: wrap;
+            backdrop-filter: blur(12px);
         }
-        .fuel-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            min-width: 180px;
-        }
+        .fuel-item { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 180px; }
         .fuel-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
-            color: var(--muted);
+            color: var(--text-muted);
             white-space: nowrap;
             min-width: 62px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
         .fuel-bar-wrap {
             flex: 1;
-            height: 14px;
-            background: #27272a;
-            border-radius: 7px;
+            height: 6px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 3px;
             overflow: hidden;
-            position: relative;
             min-width: 80px;
         }
-        .fuel-bar-fill {
-            height: 100%;
-            border-radius: 7px;
-            transition: width 0.6s ease, background 0.4s ease;
-        }
-        .fuel-bar-fill.green { background: linear-gradient(90deg, #22c55e, #16a34a); }
-        .fuel-bar-fill.yellow { background: linear-gradient(90deg, #eab308, #ca8a04); }
-        .fuel-bar-fill.red { background: linear-gradient(90deg, #ef4444, #dc2626); }
+        .fuel-bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease, background 0.4s ease; }
+        .fuel-bar-fill.green { background: linear-gradient(90deg, var(--teal), var(--green)); }
+        .fuel-bar-fill.yellow { background: linear-gradient(90deg, #D4A853, #E8B84A); }
+        .fuel-bar-fill.red { background: linear-gradient(90deg, var(--rose), var(--red)); }
         .fuel-bar-fill.red-pulse {
-            background: linear-gradient(90deg, #ef4444, #dc2626);
+            background: linear-gradient(90deg, var(--rose), var(--red));
             animation: fuelPulse 1.5s ease-in-out infinite;
         }
-        @keyframes fuelPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-        .fuel-pct {
-            font-size: 13px;
-            font-weight: 800;
-            min-width: 36px;
-            text-align: right;
-        }
-        .fuel-pct.green { color: #4ade80; }
-        .fuel-pct.yellow { color: #facc15; }
-        .fuel-pct.red { color: #f87171; }
-        .fuel-reset {
-            font-size: 10px;
-            color: #52525b;
-            white-space: nowrap;
-        }
+        @keyframes fuelPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .fuel-pct { font-size: 12px; font-weight: 700; min-width: 36px; text-align: right; font-variant-numeric: tabular-nums; }
+        .fuel-pct.green { color: var(--teal); }
+        .fuel-pct.yellow { color: var(--amber); }
+        .fuel-pct.red { color: var(--rose); }
+        .fuel-reset { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
         .fuel-model {
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 11px;
+            font-weight: 600;
             white-space: nowrap;
-            padding: 4px 10px;
-            border-radius: 8px;
+            padding: 4px 12px;
+            border-radius: var(--radius-sm);
         }
         .fuel-model.ok {
-            color: #a78bfa;
-            background: rgba(139, 92, 246, 0.12);
-            border: 1px solid rgba(139, 92, 246, 0.25);
+            color: var(--purple);
+            background: var(--purple-soft);
+            border: 1px solid var(--purple-border);
         }
         .fuel-model.fallback {
-            color: #fbbf24;
-            background: rgba(251, 191, 36, 0.12);
-            border: 1px solid rgba(251, 191, 36, 0.25);
+            color: var(--amber);
+            background: rgba(212,168,83,0.1);
+            border: 1px solid rgba(212,168,83,0.25);
             animation: fuelPulse 2s ease-in-out infinite;
         }
-        .fuel-updated {
-            font-size: 10px;
-            color: #3f3f46;
-            white-space: nowrap;
-        }
-        .fuel-thinking {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .fuel-updated { font-size: 10px; color: var(--text-subtle); white-space: nowrap; }
+        .fuel-thinking { display: flex; align-items: center; gap: 6px; }
         .fuel-thinking-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
-            color: var(--muted);
+            color: var(--text-muted);
             white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
         .thinking-pill {
             display: inline-flex;
             align-items: center;
             gap: 3px;
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 600;
             padding: 2px 8px;
             border-radius: 10px;
             white-space: nowrap;
         }
-        .thinking-pill.high {
-            background: rgba(239, 68, 68, 0.15);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-        .thinking-pill.medium {
-            background: rgba(234, 179, 8, 0.15);
-            color: #facc15;
-            border: 1px solid rgba(234, 179, 8, 0.3);
-        }
-        .thinking-pill.low {
-            background: rgba(34, 197, 94, 0.15);
-            color: #4ade80;
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-        .thinking-pill .pill-count {
-            font-weight: 800;
-        }
-        .thinking-active {
-            font-size: 10px;
-            color: var(--subtle);
-            font-style: italic;
-        }
-        /* === TAG FILTER BAR === */
+        .thinking-pill.high { background: rgba(221,144,152,0.1); color: var(--rose); border: 1px solid rgba(221,144,152,0.2); }
+        .thinking-pill.medium { background: rgba(212,168,83,0.1); color: var(--amber); border: 1px solid rgba(212,168,83,0.2); }
+        .thinking-pill.low { background: rgba(74,222,128,0.1); color: var(--green); border: 1px solid rgba(74,222,128,0.2); }
+        .thinking-pill .pill-count { font-weight: 800; }
+        .thinking-active { font-size: 10px; color: var(--text-muted); font-style: italic; }
+
+        /* === FILTER BAR === */
         .filter-bar {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 16px;
+            padding: 10px 18px;
             background: var(--panel);
-            border-radius: 10px;
-            border: 1px solid var(--panel-2);
+            border-radius: var(--radius);
+            border: 1px solid var(--panel-border);
             margin-bottom: 16px;
             flex-wrap: wrap;
+            backdrop-filter: blur(12px);
         }
         .filter-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
-            color: var(--subtle);
+            color: var(--text-muted);
             margin-right: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
         .filter-pill {
             font-size: 11px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 10px;
-            border: 1px solid #3f3f46;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--panel-border);
             background: transparent;
-            color: var(--muted);
+            color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
+            font-family: var(--font-body);
         }
-        .filter-pill:hover { border-color: var(--accent); color: var(--text); }
-        .filter-pill.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: white;
-        }
-        .filter-pill.active-setup { background: #1c4532; border-color: #1c4532; color: #86efac; }
-        .filter-pill.active-scraping { background: #713f12; border-color: #713f12; color: #fde047; }
-        .filter-pill.active-research { background: #4c1d95; border-color: #4c1d95; color: #c4b5fd; }
-        .filter-pill.active-MIS { background: #1e3a5f; border-color: #1e3a5f; color: #93c5fd; }
-        .filter-pill.active-infra { background: #7c2d12; border-color: #7c2d12; color: #fdba74; }
-        .page-loaded {
-            font-size: 11px;
-            color: #52525b;
-            margin-left: auto;
-        }
+        .filter-pill:hover { border-color: var(--accent-border); color: var(--text-secondary); }
+        .filter-pill.active { background: var(--accent-soft); border-color: var(--accent-border); color: var(--accent); }
+        .filter-pill.active-setup { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.25); color: #6ee7a0; }
+        .filter-pill.active-scraping { background: rgba(250,204,21,0.1); border-color: rgba(250,204,21,0.25); color: #fde68a; }
+        .filter-pill.active-research { background: var(--purple-soft); border-color: var(--purple-border); color: #b4b0ff; }
+        .filter-pill.active-MIS { background: var(--accent-soft); border-color: var(--accent-border); color: #67d8f0; }
+        .filter-pill.active-infra { background: rgba(212,168,83,0.1); border-color: rgba(212,168,83,0.25); color: #e8c97a; }
+        .page-loaded { font-size: 11px; color: var(--text-subtle); margin-left: auto; }
 
-        /* === CHANGELOG PANEL === */
-        .changelog-wrap {
-            margin-bottom: 16px;
-        }
+        /* === CHANGELOG === */
+        .changelog-wrap { margin-bottom: 16px; }
         .changelog-toggle {
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 8px 14px;
+            padding: 10px 16px;
             background: var(--panel);
-            border: 1px solid #2d2d44;
-            border-radius: 10px;
+            border: 1px solid var(--panel-border);
+            border-radius: var(--radius);
             cursor: pointer;
             font-size: 13px;
             font-weight: 600;
             color: var(--accent);
-            transition: all 0.2s;
+            transition: all 0.25s;
             width: 100%;
             text-align: left;
+            font-family: var(--font-body);
+            backdrop-filter: blur(12px);
         }
-        .changelog-toggle:hover { background: #1e1b2e; }
+        .changelog-toggle:hover { background: var(--panel-hover); }
         .changelog-toggle .badge {
             background: var(--accent);
             color: white;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 800;
-            padding: 1px 7px;
+            padding: 2px 8px;
             border-radius: 8px;
             margin-left: 4px;
         }
         .changelog-panel {
             margin-top: 6px;
-            padding: 8px 14px;
-            background: linear-gradient(135deg, #18181b 0%, #1a1a2e 100%);
-            border: 1px solid #2d2d44;
-            border-radius: 10px;
+            padding: 10px 16px;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--radius);
             display: none;
+            backdrop-filter: blur(12px);
         }
         .changelog-panel.open { display: block; }
         .changelog-more {
@@ -533,37 +526,25 @@
             border: none;
             background: none;
             font-weight: 600;
+            font-family: var(--font-body);
         }
         .changelog-more:hover { text-decoration: underline; }
-        .changelog-item {
-            font-size: 12px;
-            padding: 4px 0;
-            color: var(--muted);
-            border-bottom: 1px solid rgba(63, 63, 70, 0.3);
-        }
+        .changelog-item { font-size: 12px; padding: 6px 0; color: var(--text-secondary); border-bottom: 1px solid rgba(255,255,255,0.04); }
         .changelog-item:last-child { border-bottom: none; }
-        .changelog-item .cl-icon { margin-right: 4px; }
+        .changelog-item .cl-icon { margin-right: 6px; }
         .changelog-item .cl-task { color: var(--text); font-weight: 600; }
-        .changelog-item .cl-detail { color: var(--subtle); font-size: 11px; }
-        .changelog-empty {
-            font-size: 12px;
-            color: var(--subtle);
-            font-style: italic;
-            padding: 6px 0;
-        }
+        .changelog-item .cl-detail { color: var(--text-muted); font-size: 11px; }
+        .changelog-empty { font-size: 12px; color: var(--text-muted); font-style: italic; padding: 6px 0; }
 
+        /* === RESPONSIVE === */
         @media (max-width: 1200px) {
             .fuel-gauge { gap: 10px; padding: 8px 12px; }
             .fuel-item { min-width: 140px; }
-        }
-
-        @media (max-width: 1200px) {
             header { flex-direction: column; align-items: stretch; }
             .header-actions { flex-wrap: wrap; }
             #taskInput { width: 100%; }
             .board {
                 display: flex !important;
-                grid-template-columns: none !important;
                 flex-wrap: nowrap !important;
                 overflow-x: scroll !important;
                 scroll-snap-type: x mandatory;
@@ -579,11 +560,38 @@
                 scroll-snap-align: start;
             }
             .stats-bar { flex-wrap: wrap; gap: 12px; }
-            body { padding: 12px; }
-            h1 { font-size: 20px; }
+            body { padding: 14px; }
+            h1 { font-size: 24px; }
         }
-        @media (max-width: 500px) {
-            .column { min-width: 85vw; max-width: 85vw; }
+        @media (max-width: 500px) { .column { min-width: 85vw; max-width: 85vw; } }
+
+        /* === SCROLLBAR === */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* === LIVE UPDATE BANNER === */
+        #live-update-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent), #0098B8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 9999;
+            box-shadow: 0 8px 32px var(--accent-glow);
+            animation: slideUp 0.3s ease-out;
+            font-family: var(--font-body);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
     </style>
 </head>
@@ -591,7 +599,7 @@
     <div class="container">
         <header>
             <div>
-                <h1>⚡ ChetGPT Work Board</h1>
+                <h1>⚡ ChetGPT <em>Work</em> Board</h1>
                 <span class="last-sync" id="lastSync">Last sync: --</span>
             </div>
             <div class="header-actions">
@@ -603,8 +611,8 @@
                     <option value="MIS">🔵 MIS</option>
                     <option value="infra">🟠 infra</option>
                 </select>
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none;">
-                    <input type="checkbox" id="priorityCheck" style="accent-color:#ef4444;width:16px;height:16px;">🔴 High
+                <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-muted);cursor:pointer;user-select:none;">
+                    <input type="checkbox" id="priorityCheck" style="accent-color:var(--rose);width:16px;height:16px;">🔴 High
                 </label>
                 <button class="btn btn-primary" id="addBtn">Add</button>
                 <button class="btn btn-sync" id="syncBtn">🔄 Sync</button>
@@ -612,11 +620,11 @@
         </header>
 
         <div class="stats-bar" id="statsBar">
-            <div class="stat-item"><span class="stat-label">Backlog:</span><span class="stat-value" id="statBacklog">0</span></div>
-            <div class="stat-item"><span class="stat-label">In Progress:</span><span class="stat-value" id="statInProgress">0</span></div>
-            <div class="stat-item"><span class="stat-label">ChetGPT Active:</span><span class="stat-value" id="statActive">0</span></div>
-            <div class="stat-item"><span class="stat-label">Done:</span><span class="stat-value" id="statDone">0</span></div>
-            <div class="stat-item"><span class="stat-label">Total:</span><span class="stat-value" id="statTotal">0</span></div>
+            <div class="stat-item"><span class="stat-label">Backlog</span><span class="stat-value" id="statBacklog">0</span></div>
+            <div class="stat-item"><span class="stat-label">In Progress</span><span class="stat-value" id="statInProgress">0</span></div>
+            <div class="stat-item"><span class="stat-label">Active</span><span class="stat-value" id="statActive">0</span></div>
+            <div class="stat-item"><span class="stat-label">Done</span><span class="stat-value" id="statDone">0</span></div>
+            <div class="stat-item"><span class="stat-label">Total</span><span class="stat-value" id="statTotal">0</span></div>
         </div>
 
         <div class="fuel-gauge" id="fuelGauge">
@@ -634,23 +642,23 @@
             </div>
             <span class="fuel-model ok" id="fuelModel">🧠 --</span>
             <div class="fuel-thinking" id="fuelThinking">
-                <span class="fuel-thinking-label">💭 Thinking:</span>
-                <span class="thinking-pill high" id="thinkHigh">🔴 High <span class="pill-count">0</span></span>
-                <span class="thinking-pill medium" id="thinkMed">🟡 Med <span class="pill-count">0</span></span>
-                <span class="thinking-pill low" id="thinkLow">🟢 Low <span class="pill-count">0</span></span>
+                <span class="fuel-thinking-label">💭 Thinking</span>
+                <span class="thinking-pill high" id="thinkHigh">H <span class="pill-count">0</span></span>
+                <span class="thinking-pill medium" id="thinkMed">M <span class="pill-count">0</span></span>
+                <span class="thinking-pill low" id="thinkLow">L <span class="pill-count">0</span></span>
                 <span class="thinking-active" id="thinkActive"></span>
             </div>
             <span class="fuel-updated" id="fuelUpdated">⏱ --</span>
         </div>
 
         <div class="filter-bar" id="filterBar">
-            <span class="filter-label">🏷️ Filter:</span>
+            <span class="filter-label">🏷️ Filter</span>
             <button class="filter-pill active" data-filter="all">All</button>
-            <button class="filter-pill" data-filter="MIS">🔵 MIS</button>
-            <button class="filter-pill" data-filter="setup">🟢 setup</button>
-            <button class="filter-pill" data-filter="scraping">🟡 scraping</button>
-            <button class="filter-pill" data-filter="research">🟣 research</button>
-            <button class="filter-pill" data-filter="infra">🟠 infra</button>
+            <button class="filter-pill" data-filter="MIS">MIS</button>
+            <button class="filter-pill" data-filter="setup">Setup</button>
+            <button class="filter-pill" data-filter="scraping">Scraping</button>
+            <button class="filter-pill" data-filter="research">Research</button>
+            <button class="filter-pill" data-filter="infra">Infra</button>
             <span class="page-loaded" id="pageLoaded">🔄 Loaded: --</span>
         </div>
 
@@ -666,7 +674,7 @@
                 <div class="column-header toggleable" id="backlog-toggle" role="button" tabindex="0" aria-expanded="false">
                     <span class="chevron" id="backlog-chevron">▶</span>
                     <div class="column-icon"></div>
-                    <span class="column-title" id="backlog-title">📋 Backlog (0)</span>
+                    <span class="column-title" id="backlog-title">Backlog (0)</span>
                     <span class="task-count" id="backlog-count">0</span>
                 </div>
                 <div class="column-body collapsed" id="backlog-body">
@@ -677,7 +685,7 @@
             <div class="column in-progress" data-column="inProgress">
                 <div class="column-header">
                     <div class="column-icon"></div>
-                    <span class="column-title">🔥 In Progress</span>
+                    <span class="column-title">In Progress</span>
                     <span class="task-count" id="inProgress-count">0</span>
                 </div>
                 <div class="tasks" id="inProgress"></div>
@@ -687,7 +695,7 @@
             <div class="column chet-active" data-column="chetActive">
                 <div class="column-header">
                     <div class="column-icon"></div>
-                    <span class="column-title">🤖 ChetGPT Active</span>
+                    <span class="column-title">ChetGPT Active</span>
                     <span class="task-count" id="chetActive-count">0</span>
                 </div>
                 <div class="tasks" id="chetActive"></div>
@@ -697,7 +705,7 @@
                 <div class="column-header">
                     <div class="column-icon"></div>
                     <div class="column-title-group">
-                        <span class="column-title">✅ Today's Wins</span>
+                        <span class="column-title">Today's Wins</span>
                         <span class="column-subtitle" id="done-subtitle">0 total all-time</span>
                     </div>
                     <span class="task-count" id="done-count">0</span>
@@ -785,7 +793,7 @@
             { id: 'd12', text: '✅ Extracted action items from all transcripts', column: 'done', tag: 'research', source: 'chet' },
             { id: 'd13', text: '✅ YouTube transcript tool installed', column: 'done', tag: 'setup', source: 'chet' }
         ];
-        // SYNC_TIMESTAMP: 2026-02-13T01:15:00Z
+        // SYNC_TIMESTAMP: 2026-02-13T02:56:00Z
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -800,10 +808,7 @@
         function syncTasks() {
             const stored = localStorage.getItem(STORAGE_KEY);
             let existing = [];
-            if (stored) {
-                try { existing = JSON.parse(stored); } catch(e) { existing = []; }
-            }
-
+            if (stored) { try { existing = JSON.parse(stored); } catch(e) { existing = []; } }
             const canonicalIds = new Set(CHET_TASKS.map(t => t.id));
             const userMoved = {};
             const existingTaskById = {};
@@ -813,20 +818,11 @@
                     if (t._userMoved) userMoved[t.id] = t.column;
                 }
             });
-
             const userTasks = existing.filter(t => !canonicalIds.has(t.id));
             const merged = CHET_TASKS.map(t => {
                 const prior = existingTaskById[t.id] || {};
-                return {
-                    ...t,
-                    source: 'chet',
-                    column: userMoved[t.id] || t.column,
-                    _userMoved: !!userMoved[t.id],
-                    createdAt: prior.createdAt || t.createdAt || new Date().toISOString(),
-                    completedAt: prior.completedAt || t.completedAt || null
-                };
+                return { ...t, source: 'chet', column: userMoved[t.id] || t.column, _userMoved: !!userMoved[t.id], createdAt: prior.createdAt || t.createdAt || new Date().toISOString(), completedAt: prior.completedAt || t.completedAt || null };
             });
-
             tasks = [...merged, ...userTasks.filter(t => t.source === 'chet')];
             localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
         }
@@ -841,9 +837,7 @@
 
         function loadTasks() {
             const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                try { tasks = JSON.parse(stored); } catch(e) { tasks = []; }
-            }
+            if (stored) { try { tasks = JSON.parse(stored); } catch(e) { tasks = []; } }
             tasks = tasks.filter(t => t.source === 'chet');
         }
 
@@ -852,32 +846,17 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
         }
 
-        function generateId() {
-            return 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2);
-        }
+        function generateId() { return 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2); }
 
         function addTask(text, tag, priority) {
             const trimmed = text.trim();
             if (!trimmed) return;
-            tasks.push({
-                id: generateId(),
-                text: trimmed,
-                column: 'backlog',
-                tag: tag || 'setup',
-                priority: priority || 'normal',
-                source: 'chet',
-                createdAt: new Date().toISOString(),
-                completedAt: null
-            });
+            tasks.push({ id: generateId(), text: trimmed, column: 'backlog', tag: tag || 'setup', priority: priority || 'normal', source: 'chet', createdAt: new Date().toISOString(), completedAt: null });
             saveTasks();
             renderTasks();
         }
 
-        function deleteTask(id) {
-            tasks = tasks.filter(t => t.id !== id);
-            saveTasks();
-            renderTasks();
-        }
+        function deleteTask(id) { tasks = tasks.filter(t => t.id !== id); saveTasks(); renderTasks(); }
 
         function moveTask(id, newColumn) {
             const task = tasks.find(t => t.id === id);
@@ -885,70 +864,46 @@
                 const oldColumn = task.column;
                 task.column = newColumn;
                 task._userMoved = true;
-                if (newColumn === 'done' && oldColumn !== 'done') {
-                    task.completedAt = new Date().toISOString();
-                }
+                if (newColumn === 'done' && oldColumn !== 'done') task.completedAt = new Date().toISOString();
                 saveTasks();
                 renderTasks();
             }
         }
 
         function renderTasks() {
-            const columns = {
-                backlog: document.getElementById('backlog'),
-                inProgress: document.getElementById('inProgress'),
-                chetActive: document.getElementById('chetActive'),
-                done: document.getElementById('done')
-            };
-
+            const columns = { backlog: document.getElementById('backlog'), inProgress: document.getElementById('inProgress'), chetActive: document.getElementById('chetActive'), done: document.getElementById('done') };
             Object.values(columns).forEach(col => col.innerHTML = '');
             const counts = { backlog: 0, inProgress: 0, chetActive: 0, done: 0 };
             const tasksByColumn = { backlog: [], inProgress: [], chetActive: [], done: [] };
-
             tasks.forEach(task => {
                 if (!tasksByColumn[task.column]) return;
                 counts[task.column]++;
-                if (activeFilter === 'all' || task.tag === activeFilter) {
-                    tasksByColumn[task.column].push(task);
-                }
+                if (activeFilter === 'all' || task.tag === activeFilter) tasksByColumn[task.column].push(task);
             });
-
             const backlogTasks = tasksByColumn.backlog.sort(sortHighPriorityFirst);
             const inProgressTasks = tasksByColumn.inProgress.sort(sortHighPriorityFirst);
             const activeTasks = tasksByColumn.chetActive.sort(sortHighPriorityFirst);
             const doneTasksAll = tasksByColumn.done.sort(sortNewestFirst);
             const doneTasksToday = doneTasksAll.filter(isTaskCompletedToday);
-
             backlogTasks.forEach(task => columns.backlog.appendChild(createTaskElement(task)));
-
             const inProgressVisible = UI_STATE.inProgressExpanded ? inProgressTasks : inProgressTasks.slice(0, 3);
             inProgressVisible.forEach(task => columns.inProgress.appendChild(createTaskElement(task)));
-
             activeTasks.forEach(task => columns.chetActive.appendChild(createTaskElement(task)));
-
             const doneVisible = UI_STATE.doneShowAll ? doneTasksAll : doneTasksToday;
             doneVisible.forEach(task => columns.done.appendChild(createTaskElement(task)));
-
-            if (backlogTasks.length === 0) columns.backlog.innerHTML = '<div class="empty-state">No tasks</div>';
-            if (inProgressVisible.length === 0) columns.inProgress.innerHTML = '<div class="empty-state">No tasks</div>';
-            if (activeTasks.length === 0) columns.chetActive.innerHTML = '<div class="empty-state">No tasks</div>';
-            if (doneVisible.length === 0) {
-                columns.done.innerHTML = doneTasksAll.length > 0 && !UI_STATE.doneShowAll
-                    ? '<div class="empty-state">No wins logged today yet</div>'
-                    : '<div class="empty-state">No tasks</div>';
-            }
-
+            if (backlogTasks.length === 0) columns.backlog.innerHTML = '<div class="empty-state">Nothing queued</div>';
+            if (inProgressVisible.length === 0) columns.inProgress.innerHTML = '<div class="empty-state">Clear slate</div>';
+            if (activeTasks.length === 0) columns.chetActive.innerHTML = '<div class="empty-state">Standing by</div>';
+            if (doneVisible.length === 0) columns.done.innerHTML = doneTasksAll.length > 0 && !UI_STATE.doneShowAll ? '<div class="empty-state">No wins logged today yet</div>' : '<div class="empty-state">Ship something</div>';
             document.getElementById('backlog-count').textContent = counts.backlog;
             document.getElementById('inProgress-count').textContent = counts.inProgress;
             document.getElementById('chetActive-count').textContent = counts.chetActive;
             document.getElementById('done-count').textContent = UI_STATE.doneShowAll ? doneTasksAll.length : doneTasksToday.length;
-            document.getElementById('backlog-title').textContent = `📋 Backlog (${counts.backlog})`;
+            document.getElementById('backlog-title').textContent = `Backlog (${counts.backlog})`;
             document.getElementById('done-subtitle').textContent = `${doneTasksAll.length} total all-time`;
-
             setBacklogCollapsedState();
             renderInProgressToggle(inProgressTasks.length);
             renderDoneToggle(doneTasksAll.length, doneTasksToday.length);
-
             document.getElementById('statBacklog').textContent = counts.backlog;
             document.getElementById('statInProgress').textContent = counts.inProgress;
             document.getElementById('statActive').textContent = counts.chetActive;
@@ -956,453 +911,108 @@
             document.getElementById('statTotal').textContent = tasks.length;
         }
 
-        function sortHighPriorityFirst(a, b) {
-            const rank = { critical: 0, high: 1 };
-            const aR = rank[a.priority] ?? 2;
-            const bR = rank[b.priority] ?? 2;
-            return aR - bR;
-        }
+        function sortHighPriorityFirst(a, b) { const rank = { critical: 0, high: 1 }; return (rank[a.priority] ?? 2) - (rank[b.priority] ?? 2); }
+        function sortNewestFirst(a, b) { const aT = a.completedAt ? new Date(a.completedAt).getTime() : 0; const bT = b.completedAt ? new Date(b.completedAt).getTime() : 0; if (isNaN(aT)) return 1; if (isNaN(bT)) return -1; return bT - aT; }
+        function isTaskCompletedToday(task) { if (!task.completedAt) return false; const c = new Date(task.completedAt); if (isNaN(c.getTime())) return false; const n = new Date(); return c.getFullYear()===n.getFullYear() && c.getMonth()===n.getMonth() && c.getDate()===n.getDate(); }
+        function setBacklogCollapsedState() { const b=document.getElementById('backlog-body'),ch=document.getElementById('backlog-chevron'),tg=document.getElementById('backlog-toggle'); b.classList.toggle('collapsed',!UI_STATE.backlogExpanded); ch.textContent=UI_STATE.backlogExpanded?'▼':'▶'; tg.setAttribute('aria-expanded',String(UI_STATE.backlogExpanded)); }
 
-        function sortNewestFirst(a, b) {
-            const aTime = a.completedAt ? new Date(a.completedAt).getTime() : 0;
-            const bTime = b.completedAt ? new Date(b.completedAt).getTime() : 0;
-            if (isNaN(aTime)) return 1;
-            if (isNaN(bTime)) return -1;
-            return bTime - aTime; // newest first
-        }
-
-        function isTaskCompletedToday(task) {
-            if (!task.completedAt) return false;
-            const completed = new Date(task.completedAt);
-            if (Number.isNaN(completed.getTime())) return false;
-            const now = new Date();
-            return completed.getFullYear() === now.getFullYear() &&
-                completed.getMonth() === now.getMonth() &&
-                completed.getDate() === now.getDate();
-        }
-
-        function setBacklogCollapsedState() {
-            const body = document.getElementById('backlog-body');
-            const chevron = document.getElementById('backlog-chevron');
-            const toggle = document.getElementById('backlog-toggle');
-            body.classList.toggle('collapsed', !UI_STATE.backlogExpanded);
-            chevron.textContent = UI_STATE.backlogExpanded ? '▼' : '▶';
-            toggle.setAttribute('aria-expanded', String(UI_STATE.backlogExpanded));
-        }
-
-        function renderInProgressToggle(totalInProgress) {
-            const wrap = document.getElementById('inProgress-more-wrap');
-            wrap.innerHTML = '';
-            if (totalInProgress <= 3) return;
-
-            const btn = document.createElement('button');
-            btn.className = 'toggle-link';
-            if (UI_STATE.inProgressExpanded) {
-                btn.textContent = '▼ Show less';
-            } else {
-                btn.textContent = `▶ and ${totalInProgress - 3} more...`;
-            }
-            btn.addEventListener('click', () => {
-                UI_STATE.inProgressExpanded = !UI_STATE.inProgressExpanded;
-                renderTasks();
-            });
+        function renderInProgressToggle(total) {
+            const wrap = document.getElementById('inProgress-more-wrap'); wrap.innerHTML = '';
+            if (total <= 3) return;
+            const btn = document.createElement('button'); btn.className = 'toggle-link';
+            btn.textContent = UI_STATE.inProgressExpanded ? '▼ Show less' : `▶ and ${total - 3} more...`;
+            btn.addEventListener('click', () => { UI_STATE.inProgressExpanded = !UI_STATE.inProgressExpanded; renderTasks(); });
             wrap.appendChild(btn);
         }
 
-        function renderDoneToggle(totalDone, todayDone) {
-            const wrap = document.getElementById('done-view-all-wrap');
-            wrap.innerHTML = '';
-            const hiddenCount = Math.max(0, totalDone - todayDone);
-            if (!UI_STATE.doneShowAll && hiddenCount === 0) return;
-
-            const btn = document.createElement('button');
-            btn.className = 'toggle-link';
-            if (UI_STATE.doneShowAll) {
-                btn.textContent = '▼ Show today only';
-            } else {
-                btn.textContent = `▶ View all (${totalDone})`;
-            }
-            btn.addEventListener('click', () => {
-                UI_STATE.doneShowAll = !UI_STATE.doneShowAll;
-                renderTasks();
-            });
+        function renderDoneToggle(total, today) {
+            const wrap = document.getElementById('done-view-all-wrap'); wrap.innerHTML = '';
+            const hidden = Math.max(0, total - today);
+            if (!UI_STATE.doneShowAll && hidden === 0) return;
+            const btn = document.createElement('button'); btn.className = 'toggle-link';
+            btn.textContent = UI_STATE.doneShowAll ? '▼ Show today only' : `▶ View all (${total})`;
+            btn.addEventListener('click', () => { UI_STATE.doneShowAll = !UI_STATE.doneShowAll; renderTasks(); });
             wrap.appendChild(btn);
         }
 
         function createTaskElement(task) {
-            const el = document.createElement('div');
-            el.className = 'task';
-            el.draggable = true;
-            el.dataset.id = task.id;
-
+            const el = document.createElement('div'); el.className = 'task'; el.draggable = true; el.dataset.id = task.id;
             if (task.priority === 'critical') el.classList.add('priority-critical');
             else if (task.priority === 'high') el.classList.add('priority-high');
-
             const tagClass = 'tag-' + (task.tag || 'setup');
             const tagLabel = task.tag || 'setup';
-            const priorityBadge = task.priority === 'critical' ? '<span class="priority-badge-critical">⭐ CRITICAL</span>' : task.priority === 'high' ? '<span class="priority-badge">🔴 HIGH</span>' : '';
+            const priorityBadge = task.priority === 'critical' ? '<span class="priority-badge-critical">⭐ CRITICAL</span>' : task.priority === 'high' ? '<span class="priority-badge">HIGH</span>' : '';
             let timeStamp = '';
-            if (task.completedAt) {
-                const d = new Date(task.completedAt);
-                if (!isNaN(d.getTime())) {
-                    const timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-                    const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                    timeStamp = `<span style="color:#52525b;font-size:10px;margin-left:6px;">✅ ${dateStr} ${timeStr}</span>`;
-                }
-            }
-
-            el.innerHTML = `
-                <span class="task-text">${escapeHtml(task.text)}${priorityBadge}</span>
-                <button class="delete-btn" title="Delete">×</button>
-                <div class="task-meta">
-                    🤖 <span class="task-tag ${tagClass}">${tagLabel}</span>${timeStamp}
-                </div>
-            `;
-
-            el.querySelector('.delete-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                deleteTask(task.id);
-            });
-
-            el.addEventListener('dragstart', function(e) {
-                draggedTask = this;
-                this.classList.add('dragging');
-                e.dataTransfer.setData('text/plain', this.dataset.id);
-            });
-
-            el.addEventListener('dragend', function() {
-                this.classList.remove('dragging');
-                draggedTask = null;
-            });
-
+            if (task.completedAt) { const d = new Date(task.completedAt); if (!isNaN(d.getTime())) { const ts = d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}); const ds = d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); timeStamp = `<span style="color:var(--text-muted);font-size:10px;margin-left:6px;">✅ ${ds} ${ts}</span>`; } }
+            el.innerHTML = `<span class="task-text">${escapeHtml(task.text)}${priorityBadge}</span><button class="delete-btn" title="Delete">×</button><div class="task-meta"><span class="task-tag ${tagClass}">${tagLabel}</span>${timeStamp}</div>`;
+            el.querySelector('.delete-btn').addEventListener('click', (e) => { e.stopPropagation(); deleteTask(task.id); });
+            el.addEventListener('dragstart', function(e) { draggedTask = this; this.classList.add('dragging'); e.dataTransfer.setData('text/plain', this.dataset.id); });
+            el.addEventListener('dragend', function() { this.classList.remove('dragging'); draggedTask = null; });
             return el;
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
 
         function setupEventListeners() {
-            document.getElementById('addBtn').addEventListener('click', () => {
-                const input = document.getElementById('taskInput');
-                const tag = document.getElementById('tagSelect').value;
-                const pri = document.getElementById('priorityCheck').checked ? 'high' : 'normal';
-                addTask(input.value, tag, pri);
-                input.value = '';
-                document.getElementById('priorityCheck').checked = false;
-                input.focus();
-            });
-
-            document.getElementById('taskInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const tag = document.getElementById('tagSelect').value;
-                    const pri = document.getElementById('priorityCheck').checked ? 'high' : 'normal';
-                    addTask(e.target.value, tag, pri);
-                    e.target.value = '';
-                    document.getElementById('priorityCheck').checked = false;
-                }
-            });
-
-            const backlogToggle = document.getElementById('backlog-toggle');
-            backlogToggle.addEventListener('click', () => {
-                UI_STATE.backlogExpanded = !UI_STATE.backlogExpanded;
-                setBacklogCollapsedState();
-            });
-            backlogToggle.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    UI_STATE.backlogExpanded = !UI_STATE.backlogExpanded;
-                    setBacklogCollapsedState();
-                }
-            });
-            backlogToggle.addEventListener('dragover', (e) => {
-                e.preventDefault();
-            });
-            backlogToggle.addEventListener('drop', (e) => {
-                e.preventDefault();
-                const taskId = e.dataTransfer.getData('text/plain');
-                moveTask(taskId, 'backlog');
-            });
-
-            // Filter pills
-            document.querySelectorAll('.filter-pill').forEach(pill => {
-                pill.addEventListener('click', () => {
-                    const filter = pill.dataset.filter;
-                    activeFilter = filter;
-                    document.querySelectorAll('.filter-pill').forEach(p => {
-                        p.className = 'filter-pill';
-                    });
-                    pill.className = 'filter-pill ' + (filter === 'all' ? 'active' : 'active-' + filter);
-                    renderTasks();
-                });
-            });
-
-            // Page loaded timestamp
-            const now = new Date();
-            document.getElementById('pageLoaded').textContent = '🔄 Loaded: ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-
-            document.getElementById('syncBtn').addEventListener('click', () => {
-                localStorage.removeItem(STORAGE_KEY);
-                syncTasks();
-                loadTasks();
-                renderTasks();
-                alert('Synced work board defaults.');
-            });
-
+            document.getElementById('addBtn').addEventListener('click', () => { const i=document.getElementById('taskInput'),t=document.getElementById('tagSelect').value,p=document.getElementById('priorityCheck').checked?'high':'normal'; addTask(i.value,t,p); i.value=''; document.getElementById('priorityCheck').checked=false; i.focus(); });
+            document.getElementById('taskInput').addEventListener('keypress', (e) => { if(e.key==='Enter'){ const t=document.getElementById('tagSelect').value,p=document.getElementById('priorityCheck').checked?'high':'normal'; addTask(e.target.value,t,p); e.target.value=''; document.getElementById('priorityCheck').checked=false; } });
+            const bt = document.getElementById('backlog-toggle');
+            bt.addEventListener('click', () => { UI_STATE.backlogExpanded=!UI_STATE.backlogExpanded; setBacklogCollapsedState(); });
+            bt.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); UI_STATE.backlogExpanded=!UI_STATE.backlogExpanded; setBacklogCollapsedState(); } });
+            bt.addEventListener('dragover', (e) => e.preventDefault());
+            bt.addEventListener('drop', (e) => { e.preventDefault(); moveTask(e.dataTransfer.getData('text/plain'), 'backlog'); });
+            document.querySelectorAll('.filter-pill').forEach(pill => { pill.addEventListener('click', () => { activeFilter=pill.dataset.filter; document.querySelectorAll('.filter-pill').forEach(p => p.className='filter-pill'); pill.className='filter-pill '+(activeFilter==='all'?'active':'active-'+activeFilter); renderTasks(); }); });
+            document.getElementById('pageLoaded').textContent = '🔄 Loaded: ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+            document.getElementById('syncBtn').addEventListener('click', () => { localStorage.removeItem(STORAGE_KEY); syncTasks(); loadTasks(); renderTasks(); alert('Synced work board defaults.'); });
             document.querySelectorAll('.tasks').forEach(column => {
-                column.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    const afterEl = getDragAfterElement(column, e.clientY);
-                    const draggable = document.querySelector('.dragging');
-                    if (!draggable) return;
-                    if (!afterEl) column.appendChild(draggable);
-                    else column.insertBefore(draggable, afterEl);
-                });
-
-                column.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    const taskId = e.dataTransfer.getData('text/plain');
-                    moveTask(taskId, column.id);
-                });
+                column.addEventListener('dragover', (e) => { e.preventDefault(); const after=getDragAfterElement(column,e.clientY); const d=document.querySelector('.dragging'); if(!d)return; if(!after)column.appendChild(d); else column.insertBefore(d,after); });
+                column.addEventListener('drop', (e) => { e.preventDefault(); moveTask(e.dataTransfer.getData('text/plain'), column.id); });
             });
         }
 
-        function getDragAfterElement(container, y) {
-            const els = [...container.querySelectorAll('.task:not(.dragging)')];
-            return els.reduce((closest, child) => {
-                const box = child.getBoundingClientRect();
-                const offset = y - box.top - box.height / 2;
-                if (offset < 0 && offset > closest.offset) return { offset, element: child };
-                return closest;
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
-        }
-        // === CHANGELOG DIFF ===
+        function getDragAfterElement(container, y) { return [...container.querySelectorAll('.task:not(.dragging)')].reduce((closest, child) => { const box=child.getBoundingClientRect(); const offset=y-box.top-box.height/2; if(offset<0&&offset>closest.offset) return{offset,element:child}; return closest; },{offset:Number.NEGATIVE_INFINITY}).element; }
+
+        // === CHANGELOG ===
         function runChangelog() {
-            const SNAP_KEY = 'kanban_work_snapshot';
-            const COL_LABELS = {
-                backlog: '📋 Backlog',
-                inProgress: '🔥 In Progress',
-                chetActive: '🤖 ChetGPT Active',
-                done: '✅ Done'
-            };
-
-            function buildSnapshot() {
-                const snap = {};
-                tasks.forEach(t => {
-                    snap[t.id] = { text: t.text, column: t.column, tag: t.tag, priority: t.priority };
-                });
-                return snap;
+            const SNAP_KEY='kanban_work_snapshot'; const COL_LABELS={backlog:'Backlog',inProgress:'In Progress',chetActive:'ChetGPT Active',done:'Done'};
+            function buildSnapshot(){const s={};tasks.forEach(t=>{s[t.id]={text:t.text,column:t.column,tag:t.tag,priority:t.priority}});return s;}
+            function computeChanges(o,n){const c=[];for(const id in n){const cur=n[id],prev=o[id];if(!prev)c.push({type:'added',text:cur.text,to:cur.column});else if(prev.column!==cur.column)c.push({type:'moved',text:cur.text,from:prev.column,to:cur.column});}for(const id in o){if(!n[id])c.push({type:'removed',text:o[id].text,from:o[id].column});}return c;}
+            function renderChangelog(changes){
+                const wrap=document.getElementById('changelogWrap'),panel=document.getElementById('changelogPanel'),title=document.getElementById('changelogTitle'),toggle=document.getElementById('changelogToggle');
+                if(!changes.length){wrap.style.display='none';return;}
+                wrap.style.display='block'; title.innerHTML='Changes since last visit <span class="badge">'+changes.length+'</span>';
+                const MAX=3; let showAll=false;
+                function buildItem(c){const short=c.text.length>55?c.text.slice(0,52)+'...':c.text; if(c.type==='moved'){const icon=c.to==='done'?'✅':'➡️';return'<div class="changelog-item"><span class="cl-icon">'+icon+'</span><span class="cl-task">'+escapeHtml(short)+'</span> <span class="cl-detail">'+COL_LABELS[c.from]+' → '+COL_LABELS[c.to]+'</span></div>';} else if(c.type==='added'){return'<div class="changelog-item"><span class="cl-icon">➕</span><span class="cl-task">'+escapeHtml(short)+'</span> <span class="cl-detail">→ '+COL_LABELS[c.to]+'</span></div>';} else{return'<div class="changelog-item"><span class="cl-icon">🗑️</span><span class="cl-task">'+escapeHtml(short)+'</span> <span class="cl-detail">from '+COL_LABELS[c.from]+'</span></div>';}}
+                function renderItems(){const vis=showAll?changes:changes.slice(0,MAX);let h=vis.map(buildItem).join('');if(!showAll&&changes.length>MAX)h+='<button class="changelog-more" id="clShowMore">▸ and '+(changes.length-MAX)+' more...</button>';else if(showAll&&changes.length>MAX)h+='<button class="changelog-more" id="clShowLess">▴ show less</button>';panel.innerHTML=h;const m=document.getElementById('clShowMore'),l=document.getElementById('clShowLess');if(m)m.addEventListener('click',e=>{e.stopPropagation();showAll=true;renderItems();});if(l)l.addEventListener('click',e=>{e.stopPropagation();showAll=false;renderItems();});}
+                renderItems(); panel.classList.remove('open'); toggle.addEventListener('click',()=>panel.classList.toggle('open'));
             }
-
-            function computeChanges(oldSnap, newSnap) {
-                const changes = [];
-                // Check new/moved tasks
-                for (const id in newSnap) {
-                    const cur = newSnap[id];
-                    const prev = oldSnap[id];
-                    if (!prev) {
-                        changes.push({ type: 'added', text: cur.text, to: cur.column });
-                    } else if (prev.column !== cur.column) {
-                        changes.push({ type: 'moved', text: cur.text, from: prev.column, to: cur.column });
-                    }
-                }
-                // Check removed tasks
-                for (const id in oldSnap) {
-                    if (!newSnap[id]) {
-                        changes.push({ type: 'removed', text: oldSnap[id].text, from: oldSnap[id].column });
-                    }
-                }
-                return changes;
-            }
-
-            function renderChangelog(changes) {
-                const wrap = document.getElementById('changelogWrap');
-                const panel = document.getElementById('changelogPanel');
-                const title = document.getElementById('changelogTitle');
-                const toggle = document.getElementById('changelogToggle');
-
-                if (changes.length === 0) {
-                    wrap.style.display = 'none';
-                    return;
-                }
-
-                wrap.style.display = 'block';
-                title.innerHTML = 'Changes since last visit <span class="badge">' + changes.length + '</span>';
-
-                const MAX_VISIBLE = 3;
-                let showAll = false;
-
-                function buildItem(c) {
-                    const shortText = c.text.length > 55 ? c.text.slice(0, 52) + '...' : c.text;
-                    if (c.type === 'moved') {
-                        const icon = c.to === 'done' ? '✅' : '➡️';
-                        return '<div class="changelog-item"><span class="cl-icon">' + icon + '</span><span class="cl-task">' + escapeHtml(shortText) + '</span> <span class="cl-detail">' + COL_LABELS[c.from] + ' → ' + COL_LABELS[c.to] + '</span></div>';
-                    } else if (c.type === 'added') {
-                        return '<div class="changelog-item"><span class="cl-icon">➕</span><span class="cl-task">' + escapeHtml(shortText) + '</span> <span class="cl-detail">→ ' + COL_LABELS[c.to] + '</span></div>';
-                    } else if (c.type === 'removed') {
-                        return '<div class="changelog-item"><span class="cl-icon">🗑️</span><span class="cl-task">' + escapeHtml(shortText) + '</span> <span class="cl-detail">from ' + COL_LABELS[c.from] + '</span></div>';
-                    }
-                    return '';
-                }
-
-                function renderItems() {
-                    const visible = showAll ? changes : changes.slice(0, MAX_VISIBLE);
-                    let html = visible.map(buildItem).join('');
-                    if (!showAll && changes.length > MAX_VISIBLE) {
-                        html += '<button class="changelog-more" id="clShowMore">▸ and ' + (changes.length - MAX_VISIBLE) + ' more changes...</button>';
-                    } else if (showAll && changes.length > MAX_VISIBLE) {
-                        html += '<button class="changelog-more" id="clShowLess">▴ show less</button>';
-                    }
-                    panel.innerHTML = html;
-
-                    const moreBtn = document.getElementById('clShowMore');
-                    const lessBtn = document.getElementById('clShowLess');
-                    if (moreBtn) moreBtn.addEventListener('click', (e) => { e.stopPropagation(); showAll = true; renderItems(); });
-                    if (lessBtn) lessBtn.addEventListener('click', (e) => { e.stopPropagation(); showAll = false; renderItems(); });
-                }
-
-                renderItems();
-                // Start COLLAPSED — user taps to expand
-                panel.classList.remove('open');
-
-                toggle.addEventListener('click', () => {
-                    panel.classList.toggle('open');
-                });
-            }
-
-            // Run after tasks are loaded
-            const oldSnap = JSON.parse(localStorage.getItem(SNAP_KEY) || '{}');
-            const newSnap = buildSnapshot();
-            const changes = computeChanges(oldSnap, newSnap);
-            renderChangelog(changes);
-
-            // Save current snapshot for next visit
-            localStorage.setItem(SNAP_KEY, JSON.stringify(newSnap));
+            const oldSnap=JSON.parse(localStorage.getItem(SNAP_KEY)||'{}'); const newSnap=buildSnapshot(); renderChangelog(computeChanges(oldSnap,newSnap)); localStorage.setItem(SNAP_KEY,JSON.stringify(newSnap));
         }
 
         // === FUEL GAUGE ===
-        (function() {
-            const FUEL_INTERVAL = 60000; // check every 60s
-
-            function fuelColor(pct) {
-                if (pct >= 85) return 'red-pulse';
-                if (pct >= 75) return 'red';
-                if (pct >= 50) return 'yellow';
-                return 'green';
+        (function(){
+            const FUEL_INTERVAL=60000;
+            function fuelColor(p){if(p>=85)return'red-pulse';if(p>=75)return'red';if(p>=50)return'yellow';return'green';}
+            function fuelTextColor(p){if(p>=75)return'red';if(p>=50)return'yellow';return'green';}
+            function renderFuel(data){
+                const sP=data.session.pct||0,sB=document.getElementById('fuelSessionBar'),sT=document.getElementById('fuelSessionPct'),sR=document.getElementById('fuelSessionReset');
+                sB.style.width=sP+'%';sB.className='fuel-bar-fill '+fuelColor(sP);sT.textContent=sP+'%';sT.className='fuel-pct '+fuelTextColor(sP);sR.textContent=data.session.resetIn?('⏱ '+data.session.resetIn):'';
+                const wP=data.weekly.pct||0,wB=document.getElementById('fuelWeeklyBar'),wT=document.getElementById('fuelWeeklyPct'),wR=document.getElementById('fuelWeeklyReset');
+                wB.style.width=wP+'%';wB.className='fuel-bar-fill '+fuelColor(wP);wT.textContent=wP+'%';wT.className='fuel-pct '+fuelTextColor(wP);wR.textContent=data.weekly.resetAt?('↻ '+data.weekly.resetAt):'';
+                const mE=document.getElementById('fuelModel');if(data.model.status==='fallback'){mE.className='fuel-model fallback';mE.textContent='⚠️ '+(data.model.fallback||'Codex');}else{mE.className='fuel-model ok';mE.textContent='🧠 '+(data.model.active||'Opus');}
+                if(data.thinking){document.querySelector('#thinkHigh .pill-count').textContent=data.thinking.high||0;document.querySelector('#thinkMed .pill-count').textContent=data.thinking.medium||0;document.querySelector('#thinkLow .pill-count').textContent=data.thinking.low||0;const a=document.getElementById('thinkActive');if(data.thinking.current)a.textContent='▸ Now: '+data.thinking.current;}
+                const u=document.getElementById('fuelUpdated');if(data.updatedAt){const d=new Date(data.updatedAt);u.textContent='⏱ '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});u.title='Last updated by '+(data.updatedBy||'ChetGPT');}
             }
-            function fuelTextColor(pct) {
-                if (pct >= 75) return 'red';
-                if (pct >= 50) return 'yellow';
-                return 'green';
-            }
-
-            function renderFuel(data) {
-                // Session bar
-                const sPct = data.session.pct || 0;
-                const sBar = document.getElementById('fuelSessionBar');
-                const sTxt = document.getElementById('fuelSessionPct');
-                const sReset = document.getElementById('fuelSessionReset');
-                sBar.style.width = sPct + '%';
-                sBar.className = 'fuel-bar-fill ' + fuelColor(sPct);
-                sTxt.textContent = sPct + '%';
-                sTxt.className = 'fuel-pct ' + fuelTextColor(sPct);
-                sReset.textContent = data.session.resetIn ? ('⏱ ' + data.session.resetIn) : '';
-
-                // Weekly bar
-                const wPct = data.weekly.pct || 0;
-                const wBar = document.getElementById('fuelWeeklyBar');
-                const wTxt = document.getElementById('fuelWeeklyPct');
-                const wReset = document.getElementById('fuelWeeklyReset');
-                wBar.style.width = wPct + '%';
-                wBar.className = 'fuel-bar-fill ' + fuelColor(wPct);
-                wTxt.textContent = wPct + '%';
-                wTxt.className = 'fuel-pct ' + fuelTextColor(wPct);
-                wReset.textContent = data.weekly.resetAt ? ('↻ ' + data.weekly.resetAt) : '';
-
-                // Model indicator
-                const modelEl = document.getElementById('fuelModel');
-                if (data.model.status === 'fallback') {
-                    modelEl.className = 'fuel-model fallback';
-                    modelEl.textContent = '⚠️ ' + (data.model.fallback || 'Codex');
-                } else {
-                    modelEl.className = 'fuel-model ok';
-                    modelEl.textContent = '🧠 ' + (data.model.active || 'Opus');
-                }
-
-                // Thinking tracker
-                if (data.thinking) {
-                    document.querySelector('#thinkHigh .pill-count').textContent = data.thinking.high || 0;
-                    document.querySelector('#thinkMed .pill-count').textContent = data.thinking.medium || 0;
-                    document.querySelector('#thinkLow .pill-count').textContent = data.thinking.low || 0;
-                    const activeEl = document.getElementById('thinkActive');
-                    if (data.thinking.current) {
-                        activeEl.textContent = '▸ Now: ' + data.thinking.current;
-                    }
-                }
-
-                // Updated time
-                const upd = document.getElementById('fuelUpdated');
-                if (data.updatedAt) {
-                    const d = new Date(data.updatedAt);
-                    const timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-                    upd.textContent = '⏱ ' + timeStr;
-                    upd.title = 'Last updated by ' + (data.updatedBy || 'ChetGPT');
-                }
-            }
-
-            async function fetchFuel() {
-                try {
-                    const res = await fetch('usage.json?_=' + Date.now(), { cache: 'no-store' });
-                    if (!res.ok) return;
-                    const data = await res.json();
-                    renderFuel(data);
-                } catch(e) { /* silent */ }
-            }
-
-            fetchFuel();
-            setInterval(fetchFuel, FUEL_INTERVAL);
+            async function fetchFuel(){try{const r=await fetch('usage.json?_='+Date.now(),{cache:'no-store'});if(!r.ok)return;renderFuel(await r.json());}catch(e){}}
+            fetchFuel();setInterval(fetchFuel,FUEL_INTERVAL);
         })();
 
         // === LIVE UPDATE CHECKER ===
-        (function() {
-            const CHECK_INTERVAL = 30000; // 30 seconds
-            let currentTimestamp = '';
-            const tsMatch = document.documentElement.innerHTML.match(/SYNC_TIMESTAMP:\s*([^\n<]+)/);
-            if (tsMatch) currentTimestamp = tsMatch[1].trim();
-
-            let banner = null;
-
-            function createBanner() {
-                if (banner) return;
-                banner = document.createElement('div');
-                banner.id = 'live-update-banner';
-                banner.innerHTML = '🔄 Board updated — <strong>tap to refresh</strong>';
-                banner.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#6366f1;color:white;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;z-index:9999;box-shadow:0 8px 25px rgba(99,102,241,0.4);animation:slideUp 0.3s ease-out;font-family:-apple-system,sans-serif;';
-                banner.addEventListener('click', () => location.reload());
-                document.body.appendChild(banner);
-
-                const style = document.createElement('style');
-                style.textContent = '@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
-                document.head.appendChild(style);
-            }
-
-            async function checkForUpdates() {
-                try {
-                    const res = await fetch(location.href + '?_=' + Date.now(), { cache: 'no-store' });
-                    const text = await res.text();
-                    const match = text.match(/SYNC_TIMESTAMP:\s*([^\n<]+)/);
-                    if (match) {
-                        const remoteTs = match[1].trim();
-                        if (currentTimestamp && remoteTs !== currentTimestamp) {
-                            createBanner();
-                        }
-                    }
-                } catch (e) { /* silent fail */ }
-            }
-
-            setInterval(checkForUpdates, CHECK_INTERVAL);
+        (function(){
+            const CI=30000;let ct='';const m=document.documentElement.innerHTML.match(/SYNC_TIMESTAMP:\s*([^\n<]+)/);if(m)ct=m[1].trim();let banner=null;
+            function createBanner(){if(banner)return;banner=document.createElement('div');banner.id='live-update-banner';banner.innerHTML='🔄 Board updated — <strong>tap to refresh</strong>';banner.addEventListener('click',()=>location.reload());document.body.appendChild(banner);}
+            async function check(){try{const r=await fetch(location.href+'?_='+Date.now(),{cache:'no-store'});const t=await r.text();const m=t.match(/SYNC_TIMESTAMP:\s*([^\n<]+)/);if(m){const rt=m[1].trim();if(ct&&rt!==ct)createBanner();}}catch(e){}}
+            setInterval(check,CI);
         })();
     </script>
 </body>
