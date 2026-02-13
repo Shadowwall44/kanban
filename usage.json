@@ -1,7 +1,7 @@
 {
   "session": {
-    "pct": 85,
-    "resetIn": 2.5,
+    "pct": 93,
+    "resetIn": 5,
     "note": "Calibrated from screenshot 11:29 PM — 1.7%/exchange"
   },
   "weekly": {
@@ -22,6 +22,6 @@
     "low": 0,
     "note": "Today's exchanges by thinking level"
   },
-  "updatedAt": "2026-02-12T23:33:00-05:00",
-  "updatedBy": "opus-direct"
+  "updatedAt": "2026-02-12T23:46:52-05:00",
+  "updatedBy": "gauge-cron"
 }
