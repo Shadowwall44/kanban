@@ -51,12 +51,6 @@
             --mesh-teal-deep: rgba(0, 122, 148, 0.04);
             --mesh-overlay: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 36%, rgba(255,255,255,0.12) 100%);
 
-            --action-bar-bg: rgba(255, 255, 255, 0.94);
-            --action-bar-border: rgba(0, 0, 0, 0.08);
-            --action-bar-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            --action-btn-hover-bg: rgba(0, 151, 178, 0.10);
-            --action-btn-active-bg: rgba(196, 150, 46, 0.15);
-
             --scrollbar-track: transparent;
             --scrollbar-thumb: rgba(0, 0, 0, 0.12);
             --scrollbar-thumb-hover: rgba(0, 0, 0, 0.22);
@@ -109,12 +103,6 @@
             --mesh-rose: rgba(212, 126, 184, 0.12);
             --mesh-teal-deep: rgba(0, 122, 148, 0.12);
             --mesh-overlay: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 36%, rgba(255,255,255,0.02) 100%);
-
-            --action-bar-bg: rgba(255, 255, 255, 0.10);
-            --action-bar-border: rgba(255, 255, 255, 0.07);
-            --action-bar-shadow: 0px 18px 20px rgba(0, 0, 0, 0.2);
-            --action-btn-hover-bg: rgba(255, 255, 255, 0.10);
-            --action-btn-active-bg: rgba(196, 150, 46, 0.22);
 
             --scrollbar-track: rgba(255, 255, 255, 0.08);
             --scrollbar-thumb: rgba(255, 255, 255, 0.34);
@@ -295,47 +283,56 @@
 
         .floating-action-bar {
             position: fixed;
-            top: 24px;
-            right: 32px;
-            z-index: 1200;
+            top: 22px;
+            right: 28px;
+            z-index: 9500;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px;
-            border-radius: 36px;
-            background: var(--action-bar-bg);
-            border: 1px solid var(--action-bar-border);
-            box-shadow: var(--action-bar-shadow);
-            backdrop-filter: blur(24px);
+            gap: 10px;
+            padding: 7px 12px;
+            border-radius: 34px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(16px);
+        }
+
+        html[data-theme="dark"] .floating-action-bar {
+            background: rgba(255, 255, 255, 0.10);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.24);
+            backdrop-filter: blur(20px);
         }
 
         .fab-btn {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border: none;
             border-radius: 50%;
             background: transparent;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             padding: 0;
+            transition: transform 0.25s ease, color 0.25s ease, background 0.25s ease;
         }
 
         .fab-btn svg {
-            width: 19px;
-            height: 19px;
+            width: 20px;
+            height: 20px;
             stroke: currentColor;
             fill: none;
             stroke-width: 1.8;
             stroke-linecap: round;
             stroke-linejoin: round;
+            pointer-events: none;
         }
 
         .fab-btn:hover {
-            color: var(--accent-teal);
-            background: var(--action-btn-hover-bg);
+            color: var(--text);
+            transform: translateY(-1px);
         }
 
         .fab-btn:focus-visible {
@@ -344,20 +341,22 @@
         }
 
         .fab-btn.active {
-            background: var(--action-btn-active-bg);
+            background: rgba(196, 150, 46, 0.15);
+            color: var(--accent-amber);
         }
-
-        #themeToggle.active { color: var(--accent-teal); }
-        #filterToggle.active { color: var(--accent-amber); }
 
         #syncBtn.syncing {
             color: var(--accent-teal);
-            background: var(--action-btn-active-bg);
+            background: rgba(0, 151, 178, 0.12);
         }
 
-        .filter-bar.is-hidden {
-            display: none;
-        }
+        body.all-collapsed .column { min-height: auto; }
+        body.all-collapsed .column .tasks,
+        body.all-collapsed .column .column-body,
+        body.all-collapsed .column .column-subtitle,
+        body.all-collapsed #inProgress-more-wrap,
+        body.all-collapsed #done-view-all-wrap { display: none; }
+        body.all-collapsed .column .column-header { margin-bottom: 0; padding-bottom: 0; border-bottom-color: transparent; }
 
         .stats-bar {
             display: flex;
@@ -1286,21 +1285,20 @@
     </div>
 
     <div class="floating-action-bar" id="floatingActionBar" role="toolbar" aria-label="Board actions">
+        <button class="fab-btn" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Toggle theme">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 1 0 11 11z"/></svg>
+        </button>
         <button class="fab-btn" id="syncBtn" type="button" aria-label="Sync board" title="Sync board">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.9 3"/><path d="M20 20v-4h-4"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.36-6.36"/><path d="M21 12a9 9 0 0 1-15.36 6.36"/><path d="M18 2v4h-4"/><path d="M6 22v-4h4"/></svg>
         </button>
-        <button class="fab-btn active" id="filterToggle" type="button" aria-label="Hide filters" aria-pressed="true" title="Hide filters">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16"/><path d="M7 12h10"/><path d="M10 18h4"/></svg>
-        </button>
-        <button class="fab-btn" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+        <button class="fab-btn" id="collapseBtn" type="button" aria-label="Collapse all columns" aria-pressed="false" title="Collapse all">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14h6v6"/><path d="M20 10h-6V4"/><path d="M14 10l7-7"/><path d="M3 21l7-7"/></svg>
         </button>
     </div>
 
     <script>
         const STORAGE_KEY = 'kanban_work_v1';
         const THEME_KEY = 'kanban_theme';
-        const FILTER_BAR_KEY = 'kanban_filter_bar';
         const COLUMNS = ['backlog', 'inProgress', 'chetActive', 'done'];
         let tasks = [];
         let draggedTask = null;
@@ -1309,7 +1307,8 @@
             backlogExpanded: false,
             inProgressExpanded: false,
             doneShowAll: false,
-            filterBarVisible: true
+            filterBarVisible: true,
+            allCollapsed: false
         };
 
         const TAG_ICON_MAP = {
@@ -1332,10 +1331,11 @@
             '🛠️': 'tools',
             '🛠': 'tools',
             '💬': 'chat',
-            '📅': 'calendar'
+            '📅': 'calendar',
+            '⭐': 'starFill'
         };
 
-        const TASK_EMOJI_REGEX = /(✅|📊|🔧|📋|💰|📱|🧠|🔄|🛠️|🛠|💬|📅)/g;
+        const TASK_EMOJI_REGEX = /(✅|📊|🔧|📋|💰|📱|🧠|🔄|🛠️|🛠|💬|📅|⭐)/g;
 
         // ============================================================
         // WORK TASKS ONLY (source: chet)
@@ -1405,7 +1405,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             applySavedTheme();
-            applyFilterBarPref();
             syncTasks();
             loadTasks();
             renderTasks();
@@ -1424,6 +1423,9 @@
                 toggle.setAttribute('aria-pressed', String(dark));
                 toggle.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
                 toggle.setAttribute('title', dark ? 'Switch to light mode' : 'Switch to dark mode');
+                toggle.innerHTML = dark
+                    ? '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M4.93 4.93l2.12 2.12"/><path d="M16.95 16.95l2.12 2.12"/><path d="M2 12h3"/><path d="M19 12h3"/><path d="M4.93 19.07l2.12-2.12"/><path d="M16.95 7.05l2.12-2.12"/></svg>'
+                    : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 1 0 11 11z"/></svg>';
             }
         }
 
@@ -1439,27 +1441,19 @@
             localStorage.setItem(THEME_KEY, next);
         }
 
-        function applyFilterBarState() {
-            const filterBar = document.getElementById('filterBar');
-            const toggle = document.getElementById('filterToggle');
-            if (filterBar) filterBar.classList.toggle('is-hidden', !UI_STATE.filterBarVisible);
-            if (toggle) {
-                toggle.classList.toggle('active', UI_STATE.filterBarVisible);
-                toggle.setAttribute('aria-pressed', String(UI_STATE.filterBarVisible));
-                toggle.setAttribute('aria-label', UI_STATE.filterBarVisible ? 'Hide filters' : 'Show filters');
-                toggle.setAttribute('title', UI_STATE.filterBarVisible ? 'Hide filters' : 'Show filters');
+        function toggleCollapseAll() {
+            UI_STATE.allCollapsed = !UI_STATE.allCollapsed;
+            document.body.classList.toggle('all-collapsed', UI_STATE.allCollapsed);
+            const btn = document.getElementById('collapseBtn');
+            if (btn) {
+                btn.classList.toggle('active', UI_STATE.allCollapsed);
+                btn.setAttribute('aria-pressed', String(UI_STATE.allCollapsed));
+                btn.setAttribute('title', UI_STATE.allCollapsed ? 'Expand all' : 'Collapse all');
+                btn.innerHTML = UI_STATE.allCollapsed
+                    ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>'
+                    : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14h6v6"/><path d="M20 10h-6V4"/><path d="M14 10l7-7"/><path d="M3 21l7-7"/></svg>';
             }
-        }
-
-        function applyFilterBarPref() {
-            UI_STATE.filterBarVisible = localStorage.getItem(FILTER_BAR_KEY) !== 'hidden';
-            applyFilterBarState();
-        }
-
-        function toggleFilterBar() {
-            UI_STATE.filterBarVisible = !UI_STATE.filterBarVisible;
-            localStorage.setItem(FILTER_BAR_KEY, UI_STATE.filterBarVisible ? 'visible' : 'hidden');
-            applyFilterBarState();
+            setBacklogCollapsedState();
         }
 
         function pulseSyncButton() {
@@ -1470,25 +1464,26 @@
         }
 
         function iconSvg(name) {
+            const s = 'width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px;" aria-hidden="true"';
             const icons = {
-                barChart: '<path d="M4 20V11"/><path d="M10 20V6"/><path d="M16 20v-8"/><path d="M2 20h20"/>',
-                settings: '<circle cx="12" cy="12" r="3"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M5.6 18.4l1.6-1.6M16.8 7.2l1.6-1.6"/>',
-                download: '<path d="M12 4v10"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 19h16"/>',
-                search: '<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>',
-                server: '<rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7h.01M7 17h.01"/>',
-                wrench: '<path d="M21 7.5a5 5 0 0 1-6.8 4.6L7.6 18.7a2 2 0 0 1-2.8-2.8l6.6-6.6A5 5 0 0 1 16 2.5l-2.3 2.3 2.5 2.5L18.5 5A5 5 0 0 1 21 7.5Z"/>',
-                clipboard: '<rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4.5h6v3H9z"/>',
-                coin: '<circle cx="12" cy="12" r="8"/><path d="M14.8 9.2c-.6-.7-1.6-1.2-2.8-1.2-1.7 0-3 .9-3 2.2 0 1.2 1 1.9 2.7 2.2l.7.1c1.6.3 2.4.8 2.4 2 0 1.3-1.2 2.2-3 2.2-1.5 0-2.6-.5-3.3-1.4"/><path d="M12 7v10"/>',
-                phone: '<rect x="8" y="3" width="8" height="18" rx="2"/><path d="M11 18h2"/>',
-                bulb: '<path d="M8.2 14.2c-1.3-1-2.2-2.7-2.2-4.6A6 6 0 0 1 12 3.6a6 6 0 0 1 6 6c0 2-.9 3.7-2.2 4.7-.6.5-.9 1-.9 1.7H9.1c0-.7-.3-1.2-.9-1.8Z"/><path d="M9.8 18h4.4"/><path d="M10.3 20h3.4"/>',
-                refresh: '<path d="M20 6v5h-5"/><path d="M4 18v-5h5"/><path d="M19 11a7 7 0 0 0-12-4"/><path d="M5 13a7 7 0 0 0 12 4"/>',
-                tools: '<path d="M14 6l4 4"/><path d="M5 19l6-6"/><path d="M4 20l3-3"/><path d="M14.5 4.5l5 5"/><path d="M9 7l8 8"/>',
-                chat: '<path d="M4 5h16v10H9l-5 4V5Z"/>',
-                calendar: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/>',
-                checkCircle: '<circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity="0.18"/><circle cx="12" cy="12" r="9"/><path d="m8.3 12.2 2.5 2.5 4.9-4.9"/>'
+                barChart: `<svg ${s}><path d="M4 20h16"/><rect x="6" y="11" width="3" height="7" rx="0.5"/><rect x="10.5" y="7" width="3" height="11" rx="0.5"/><rect x="15" y="4" width="3" height="14" rx="0.5"/></svg>`,
+                settings: `<svg ${s}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1.08 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.83 1 1.51 1H21a2 2 0 0 1 0 4h-.09c-.68 0-1.25.4-1.51 1z"/></svg>`,
+                download: `<svg ${s}><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>`,
+                search: `<svg ${s}><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>`,
+                server: `<svg ${s}><rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><line x1="7" y1="7" x2="7.01" y2="7"/><line x1="7" y1="17" x2="7.01" y2="17"/></svg>`,
+                wrench: `<svg ${s}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+                clipboard: `<svg ${s}><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>`,
+                coin: `<svg ${s}><circle cx="12" cy="12" r="9"/><path d="M12 7v10"/><path d="M15 9.5c0-1.12-1.34-2-3-2s-3 .88-3 2 1.34 2 3 2 3 .88 3 2-1.34 2-3 2-3-.88-3-2"/></svg>`,
+                phone: `<svg ${s}><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>`,
+                bulb: `<svg ${s}><path d="M9 18h6"/><path d="M10 21h4"/><path d="M8 14c-1.3-1.1-2-2.7-2-4.5a6 6 0 1 1 12 0c0 1.8-.7 3.4-2 4.5-.6.5-1 1.3-1 2.1V17H9v-.4c0-.8-.4-1.6-1-2.1z"/></svg>`,
+                refresh: `<svg ${s}><path d="M3 12a9 9 0 0 1 15.36-6.36"/><path d="M21 12a9 9 0 0 1-15.36 6.36"/><path d="M18 2v4h-4"/><path d="M6 22v-4h4"/></svg>`,
+                tools: `<svg ${s}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+                chat: `<svg ${s}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+                calendar: `<svg ${s}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+                checkCircle: `<svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:-3px;margin-right:6px;" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#22A85F" stroke="none"/><path d="M8 12.4l2.5 2.5L16.3 9" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`,
+                starFill: `<svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:-3px;margin-right:4px;" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="#C4962E" stroke="#C4962E" stroke-width="1.5" stroke-linejoin="round"/></svg>`
             };
-            const body = icons[name] || icons.settings;
-            return `<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
+            return icons[name] || icons.settings;
         }
 
         function renderTaskTextWithIcons(text) {
@@ -1498,8 +1493,7 @@
                 .map(part => {
                     const iconName = EMOJI_ICON_MAP[part];
                     if (iconName) {
-                        const cls = iconName === 'checkCircle' ? 'task-inline-icon check' : 'task-inline-icon';
-                        return `<span class="${cls}">${iconSvg(iconName)}</span>`;
+                        return iconSvg(iconName);
                     }
                     return escapeHtml(part);
                 })
@@ -1621,7 +1615,7 @@
         function sortHighPriorityFirst(a, b) { const rank = { critical: 0, high: 1 }; return (rank[a.priority] ?? 2) - (rank[b.priority] ?? 2); }
         function sortNewestFirst(a, b) { const aT = a.completedAt ? new Date(a.completedAt).getTime() : 0; const bT = b.completedAt ? new Date(b.completedAt).getTime() : 0; if (isNaN(aT)) return 1; if (isNaN(bT)) return -1; return bT - aT; }
         function isTaskCompletedToday(task) { if (!task.completedAt) return false; const c = new Date(task.completedAt); if (isNaN(c.getTime())) return false; const n = new Date(); return c.getFullYear()===n.getFullYear() && c.getMonth()===n.getMonth() && c.getDate()===n.getDate(); }
-        function setBacklogCollapsedState() { const b=document.getElementById('backlog-body'),ch=document.getElementById('backlog-chevron'),tg=document.getElementById('backlog-toggle'); b.classList.toggle('collapsed',!UI_STATE.backlogExpanded); ch.textContent=UI_STATE.backlogExpanded?'▼':'▶'; tg.setAttribute('aria-expanded',String(UI_STATE.backlogExpanded)); }
+        function setBacklogCollapsedState() { const b=document.getElementById('backlog-body'),ch=document.getElementById('backlog-chevron'),tg=document.getElementById('backlog-toggle'); const shouldCollapse=UI_STATE.allCollapsed||!UI_STATE.backlogExpanded; b.classList.toggle('collapsed',shouldCollapse); ch.textContent=shouldCollapse?'▶':'▼'; tg.setAttribute('aria-expanded',String(!shouldCollapse)); }
 
         function renderInProgressToggle(total) {
             const wrap = document.getElementById('inProgress-more-wrap'); wrap.innerHTML = '';
@@ -1648,7 +1642,7 @@
             else if (task.priority === 'high') el.classList.add('priority-high');
             const tagClass = 'tag-' + (task.tag || 'setup');
             const tagLabel = task.tag || 'setup';
-            const priorityBadge = task.priority === 'critical' ? '<span class="priority-badge-critical">CRITICAL</span>' : task.priority === 'high' ? '<span class="priority-badge">HIGH</span>' : '';
+            const priorityBadge = task.priority === 'critical' ? '<span class="priority-badge-critical">' + iconSvg('starFill') + 'CRITICAL</span>' : task.priority === 'high' ? '<span class="priority-badge">HIGH</span>' : '';
             const tagIcon = getTagIcon(task.tag || 'setup');
             const taskText = renderTaskTextWithIcons(task.text);
             let timeStamp = '';
@@ -1657,7 +1651,8 @@
                 if (!isNaN(d.getTime())) {
                     const ts = d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
                     const ds = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-                    timeStamp = `<span class="task-meta-time"><span class="task-meta-icon check">${iconSvg('checkCircle')}</span>${ds} ${ts}</span>`;
+                    const checkSvg = '<svg width="12" height="12" viewBox="0 0 24 24" style="vertical-align:-2px;margin-right:4px;" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#22A85F" stroke="none"/><path d="M8 12.4l2.5 2.5L16.3 9" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+                    timeStamp = `<span class="task-meta-time">${checkSvg}${ds} ${ts}</span>`;
                 }
             }
             el.innerHTML = `<span class="task-text"><span class="task-text-row"><span class="task-leading-icon">${tagIcon}</span><span class="task-text-content">${taskText}${priorityBadge}</span></span></span><button class="delete-btn" title="Delete">×</button><div class="task-meta"><span class="task-tag ${tagClass}">${tagLabel}</span>${timeStamp}</div>`;
@@ -1680,7 +1675,7 @@
             document.querySelectorAll('.filter-pill').forEach(pill => { pill.addEventListener('click', () => { activeFilter=pill.dataset.filter; document.querySelectorAll('.filter-pill').forEach(p => p.className='filter-pill'); pill.className='filter-pill '+(activeFilter==='all'?'active':'active-'+activeFilter); renderTasks(); }); });
             document.getElementById('pageLoaded').textContent = 'Loaded: ' + new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-            document.getElementById('filterToggle').addEventListener('click', toggleFilterBar);
+            document.getElementById('collapseBtn').addEventListener('click', toggleCollapseAll);
             document.getElementById('syncBtn').addEventListener('click', () => { pulseSyncButton(); localStorage.removeItem(STORAGE_KEY); syncTasks(); loadTasks(); renderTasks(); alert('Synced work board defaults.'); });
             document.querySelectorAll('.tasks').forEach(column => {
                 column.addEventListener('dragover', (e) => { e.preventDefault(); const after=getDragAfterElement(column,e.clientY); const d=document.querySelector('.dragging'); if(!d)return; if(!after)column.appendChild(d); else column.insertBefore(d,after); });
