@@ -1,8 +1,8 @@
 {
   "session": {
-    "pct": 2,
+    "pct": 3,
     "resetIn": 5,
-    "note": "Calibrated from screenshot 11:29 PM — 1.7%/exchange"
+    "note": "Calibrated from screenshot 11:29 PM \u2014 1.7%/exchange"
   },
   "weekly": {
     "pct": 95,
@@ -22,6 +22,6 @@
     "low": 0,
     "note": "Today's exchanges by thinking level"
   },
-  "updatedAt": "2026-02-13T02:47:01-05:00",
+  "updatedAt": "2026-02-13T03:02:23.201323-05:00",
   "updatedBy": "gauge-cron"
 }
