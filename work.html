@@ -1414,26 +1414,20 @@
         // Tags: setup, scraping, research, MIS, infra
         // ============================================================
         const CHET_TASKS = [
-            // === CHET ACTIVE (what I'm doing RIGHT NOW) ===
-            { id: 'intuit_questionnaire', text: '📋 Intuit Compliance Questionnaire — Tab 1 done, need Aviel for Tab 2+ (shadow DOM)', column: 'chetActive', tag: 'MIS', source: 'chet', priority: 'critical' },
-            { id: 'kanban_realtime', text: '🔄 Kanban Real-Time Updates — fixing board sync', column: 'chetActive', tag: 'infra', source: 'chet' },
-
-            // === IN PROGRESS ===
-            { id: 'qb_api', text: '💰 QuickBooks API — Sandbox CONNECTED ✅, production needs compliance questionnaire', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'critical' },
+            { id: 'tier2_skills', text: 'Building Tier 2 Skills — kanban-sync, customer-quote, sub-agent-brief', column: 'done', tag: 'infra', source: 'chet', priority: 'high', completedAt: '2026-02-14T16:30:12.483Z' },
+            { id: 'shabbat_autonomous', text: 'Shabbat Autonomous Work — audits, Ollama, rules prep', column: 'done', tag: 'infra', source: 'chet', priority: 'medium', completedAt: '2026-02-14T16:30:12.483Z' },
+            { id: 'qb_api', text: '💰 QuickBooks API — Sandbox connected, questionnaire SUBMITTED, awaiting Intuit production review (1-5 days)', column: 'inProgress', tag: 'MIS', source: 'chet', priority: 'critical' },
             { id: 'c13', text: 'Brain Dump Round 3 — questions sent, awaiting answers', column: 'inProgress', tag: 'setup', source: 'chet', priority: 'high' },
             { id: 'android_kb', text: '📱 Android Keyboard Research (sub-agent dispatched)', column: 'inProgress', tag: 'research', source: 'chet' },
-            { id: 'task_notify', text: '📢 Task Notification System — Telegram pings on every sub-agent spawn/complete', column: 'inProgress', tag: 'infra', source: 'chet', priority: 'high' },
-
-            // === BACKLOG ===
-            { id: 'org_chart', text: '📋 Org Chart Revision (role-based)', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'org_chart', text: '📋 Org Chart Revision (role-based)', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-14T16:30:12.483Z' },
             { id: 'email_setup', text: 'Himalaya Email Setup (needs credentials from Aviel)', column: 'backlog', tag: 'setup', source: 'chet' },
             { id: 'kb_redesign', text: 'Kanban Redesign (remove fuel gauge, add features)', column: 'backlog', tag: 'infra', source: 'chet' },
             { id: 'content_factory', text: 'Content Factory / Instagram Pipeline', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'comp1', text: 'Weekly competitor price watch (NDF, VistaPrint)', column: 'backlog', tag: 'research', source: 'chet' },
+            { id: 'comp1', text: 'Weekly competitor price watch (NDF, VistaPrint)', column: 'done', tag: 'research', source: 'chet', completedAt: '2026-02-14T16:30:12.483Z' },
             { id: 'wispr1', text: '⭐ Wispr Flow Desktop (waiting on Aviel to push repos)', column: 'backlog', tag: 'research', source: 'chet' },
             { id: 'personal_app', text: 'Personal Task App (waiting on therapy notes)', column: 'backlog', tag: 'setup', source: 'chet' },
             { id: 'mis2', text: 'MIS Phase 2: Get Extractor running', column: 'backlog', tag: 'MIS', source: 'chet' },
-            { id: 'mis3', text: 'MIS Phase 3: Scrape 8 NDF products', column: 'backlog', tag: 'MIS', source: 'chet' },
+            { id: 'mis3', text: 'MIS Phase 3: Scrape 8 NDF products', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-14T16:30:12.483Z' },
             { id: 'mis4', text: 'MIS Phase 4: Build pricing engine', column: 'backlog', tag: 'MIS', source: 'chet' },
             { id: 'mis5', text: 'MIS Phase 5: Inventory + FIFO lot tracking', column: 'backlog', tag: 'MIS', source: 'chet' },
             { id: 'quote1', text: 'Instant quote drafting (text specs to 3-tier quote)', column: 'backlog', tag: 'MIS', source: 'chet' },
@@ -1444,19 +1438,24 @@
             { id: 'skill6', text: 'Build frontend design skill', column: 'backlog', tag: 'setup', source: 'chet' },
             { id: 'c16', text: 'Build pricing calculator skill', column: 'backlog', tag: 'setup', source: 'chet' },
             { id: 'c17', text: 'Build invoice extractor skill', column: 'backlog', tag: 'setup', source: 'chet' },
-            { id: 'c4', text: 'Complete 5x7 NDF postcard scrape (qty 2000-5000)', column: 'backlog', tag: 'scraping', source: 'chet' },
-            { id: 'c5', text: 'Scrape 4x6 NDF postcards', column: 'backlog', tag: 'scraping', source: 'chet' },
-            { id: 'c6', text: 'Scrape 6x9 NDF postcards', column: 'backlog', tag: 'scraping', source: 'chet' },
-            { id: 'c7', text: 'Find NDF internal pricing API', column: 'backlog', tag: 'research', source: 'chet' },
-
-            // === DONE (Feb 13 — latest batch) ===
-            { id: 'qb_sandbox', text: '💰 QuickBooks Sandbox CONNECTED — full OAuth + API tested', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T17:00:00Z', priority: 'critical' },
+            { id: 'c4', text: 'Complete 5x7 NDF postcard scrape (qty 2000-5000)', column: 'done', tag: 'scraping', source: 'chet', completedAt: '2026-02-14T16:30:12.483Z' },
+            { id: 'c5', text: 'Scrape 4x6 NDF postcards', column: 'done', tag: 'scraping', source: 'chet', completedAt: '2026-02-14T16:30:12.483Z' },
+            { id: 'c6', text: 'Scrape 6x9 NDF postcards', column: 'done', tag: 'scraping', source: 'chet', completedAt: '2026-02-14T16:30:12.483Z' },
+            { id: 'c7', text: 'Find NDF internal pricing API', column: 'done', tag: 'research', source: 'chet', completedAt: '2026-02-14T16:30:12.483Z' },
+            { id: 'skills_5_custom', text: '5 Custom Skills built (gh-pages-deploy, inkredible-context, origin-design, mission-control-sync, quickbooks-api)', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T21:15:00Z' },
+            { id: 'kanban_realtime', text: 'Kanban Real-Time Updates', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T21:00:00Z' },
+            { id: 'learning_files_3', text: '3 Learning Files created (engineer, research, operations)', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T21:00:00Z' },
+            { id: 'voice_audit_full', text: 'INKredible Voice full code audit complete', column: 'done', tag: 'research', source: 'chet', completedAt: '2026-02-13T20:43:00Z' },
+            { id: 'intuit_questionnaire', text: 'Intuit Compliance Questionnaire — ALL tabs submitted, awaiting Intuit review', column: 'done', tag: 'MIS', source: 'chet', priority: 'critical', completedAt: '2026-02-13T20:30:00Z' },
+            { id: 'instagram_strategy', text: 'Instagram Content Strategy drafted', column: 'done', tag: 'research', source: 'chet', completedAt: '2026-02-13T20:30:00Z' },
+            { id: 'trump_account_4547', text: 'Trump Account Form (IRS 4547) submitted', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-13T18:30:00Z' },
+            { id: 'task_notify', text: 'Task Notification System', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T17:30:00Z' },
+            { id: 'qb_sandbox', text: '💰 QuickBooks Sandbox CONNECTED — full OAuth + API tested', column: 'done', tag: 'MIS', source: 'chet', priority: 'critical', completedAt: '2026-02-13T17:00:00Z' },
             { id: 'zoho_blueprint', text: '📋 Zoho → MIS Feature Blueprint complete', column: 'done', tag: 'research', source: 'chet', completedAt: '2026-02-13T17:00:00Z' },
             { id: 'intuit_gen_q', text: '📋 Intuit Questionnaire — General Questions tab complete (8/8)', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T17:15:00Z' },
             { id: 'dash_year', text: '📊 Dashboard Year Filter + Monthly P&L Breakdown deployed', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T16:45:00Z' },
             { id: 'browser_relay_done', text: '🔧 Chrome Browser Relay connected + Intuit portal navigated', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T16:30:00Z' },
-            // === DONE (Feb 13 — earlier) ===
-            { id: 'fin_dash', text: '📊 Financial Dashboard deployed with P&L + Balance Sheet', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T15:00:00Z', priority: 'critical' },
+            { id: 'fin_dash', text: '📊 Financial Dashboard deployed with P&L + Balance Sheet', column: 'done', tag: 'MIS', source: 'chet', priority: 'critical', completedAt: '2026-02-13T15:00:00Z' },
             { id: 'dash_chat', text: '💬 Dashboard AI Chat — Kimi K2.5 migration complete', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T14:30:00Z' },
             { id: 'kb_personal', text: 'Personal Kanban Origin redesign deployed', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T13:00:00Z' },
             { id: 'mission_ctrl', text: '🔧 Mission Control v1 deployed', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T14:00:00Z' },
@@ -1465,15 +1464,13 @@
             { id: 'finn_new', text: 'Alex Finn transcript analysis — 2 new videos analyzed', column: 'done', tag: 'research', source: 'chet', completedAt: '2026-02-13T12:00:00Z' },
             { id: 'idea_queue', text: '🧠 Idea Queue created', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-13T11:00:00Z' },
             { id: 'himalaya_research', text: 'Himalaya email research completed', column: 'done', tag: 'research', source: 'chet', completedAt: '2026-02-13T10:00:00Z' },
-            // === DONE (Feb 13 — earlier) ===
             { id: 'second_brain', text: '🧠 Second Brain UI deployed to GitHub Pages (34 docs indexed)', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T07:35:00Z' },
             { id: 'quote_tool', text: '💰 Quote Tool v1 built — 3-tier NDF pricing, Origin design', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T06:00:00Z' },
-            { id: 'qb_received', text: '📊 QuickBooks P&L + Balance Sheet received & analyzed', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T06:30:00Z', priority: 'critical' },
+            { id: 'qb_received', text: '📊 QuickBooks P&L + Balance Sheet received & analyzed', column: 'done', tag: 'MIS', source: 'chet', priority: 'critical', completedAt: '2026-02-13T06:30:00Z' },
             { id: 'fin1', text: 'Business finance numbers loaded — $686K rev, $174K debt, -$10.7K net', column: 'done', tag: 'MIS', source: 'chet', completedAt: '2026-02-13T06:30:00Z' },
             { id: 'cron_model', text: 'All crons switched to Codex 5.3 — Opus reserved for conversations', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T05:45:00Z' },
             { id: 'brain_r12', text: 'Brain dump Rounds 1+2 complete — full personal + business context', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-13T05:00:00Z' },
             { id: 'morning_brief_v2', text: 'Morning brief enhanced — AI news, YouTube, printing trends, personal check-in', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T05:30:00Z' },
-            // === DONE (Feb 12) ===
             { id: 'kb31', text: 'Kanban v3.1: light/dark toggle + deeper shadows', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T03:55:00Z' },
             { id: 'kb30', text: 'Kanban v3: Origin light mode redesign', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T03:15:00Z' },
             { id: 'kb20', text: 'Kanban v2: Origin dark mode redesign', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-13T03:00:00Z' },
@@ -1490,14 +1487,30 @@
             { id: 'gh1', text: 'Deploy Kanban to GitHub Pages', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-12T20:44:00Z' },
             { id: 'c1', text: 'Memory search enabled (Gemini embeddings)', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T19:30:00Z' },
             { id: 'c15', text: 'Install Codex CLI + jq + ripgrep', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-12T21:32:00Z' },
-            { id: 'd1', text: 'Upgraded to Opus 4.6', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd2', text: 'Confirmed GPT-5.2 working (Codex OAuth)', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd3', text: 'Configured Brave Search API', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd7', text: 'Updated OpenClaw to 2026.2.9', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd8', text: 'Morning brief cron (8AM Mon-Fri)', column: 'done', tag: 'setup', source: 'chet' },
-            { id: 'd10', text: '5x7 postcards partial scrape (qty 25-1000)', column: 'done', tag: 'scraping', source: 'chet' }
+            { id: 'd1', text: 'Upgraded to Opus 4.6', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-14T04:12:11.284Z' },
+            { id: 'd2', text: 'Confirmed GPT-5.2 working (Codex OAuth)', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-14T04:12:11.284Z' },
+            { id: 'd3', text: 'Configured Brave Search API', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-14T04:12:11.284Z' },
+            { id: 'd7', text: 'Updated OpenClaw to 2026.2.9', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-14T04:12:11.284Z' },
+            { id: 'd8', text: 'Morning brief cron (8AM Mon-Fri)', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-14T04:12:11.284Z' },
+            { id: 'd10', text: '5x7 postcards partial scrape (qty 25-1000)', column: 'done', tag: 'scraping', source: 'chet', completedAt: '2026-02-14T04:12:11.284Z' },
+            { id: 'kanban_sync_skill', text: 'kanban-sync skill built (trigger + sync script)', column: 'done', tag: 'infra', source: 'chet', priority: 'high', completedAt: '2026-02-14T04:12:11.284Z' },
+            { id: 'cloudflare_tunnel_guide', text: 'Cloudflare Tunnel setup guide drafted (WSL2 + free tunnel + local directory)', column: 'done', tag: 'research', source: 'chet', completedAt: '2026-02-14T04:12:11.284Z' },
+            { id: 'mission_control_status_refresh', text: 'Mission Control status.json refreshed for overnight run', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-14T04:12:11.284Z' },
+            { id: 'ndf_complete', text: '✅ NDF Pricing Complete — 4,086 price points, 10 products, Excel + CSV + JSON', column: 'done', tag: 'MIS', source: 'chet', priority: 'high', completedAt: '2026-02-14T14:33:00Z' },
+            { id: 'mis_phase1_deployed', text: '🏭 MIS Phase 1 deployed to GitHub Pages — job tracker, CRM, quotes, calendar', column: 'done', tag: 'MIS', source: 'chet', priority: 'critical', completedAt: '2026-02-14T13:44:00Z' },
+            { id: 'wispr_v2', text: '🎤 Wispr Flow v2 — 15 new features, pushed to v2 branch', column: 'done', tag: 'research', source: 'chet', completedAt: '2026-02-14T13:00:00Z' },
+            { id: 'dev_mode_skill', text: '🧠 Developer Mode Skill v3.1.0 — 2,096 lines, senior dev patterns', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-14T12:00:00Z' },
+            { id: 'coaching_skills', text: '🎯 Coaching Skills Suite — deep-research, coach-business, coach-personal, coach-financial (1,265 lines)', column: 'done', tag: 'infra', source: 'chet', priority: 'high', completedAt: '2026-02-14T16:30:00Z' },
+            { id: 'safety_framework', text: '🔒 Emergency Stop + Safety Framework — kill switch, 8 control principles, permission tiers', column: 'done', tag: 'infra', source: 'chet', priority: 'critical', completedAt: '2026-02-14T16:20:00Z' },
+            { id: 'aviel_report', text: '📊 Aviel Report v1 — living progress document with patterns + growth wins', column: 'done', tag: 'setup', source: 'chet', completedAt: '2026-02-14T16:30:00Z' },
+            { id: 'nightly_digest_cron', text: '📋 Nightly Digest Cron — 8:30 PM daily, one action item, ADHD-friendly', column: 'done', tag: 'infra', source: 'chet', completedAt: '2026-02-14T16:35:00Z' },
+            { id: 'ndf_playbook', text: '💰 NDF Pricing Playbook — competitor analysis, quote guardrails, objection scripts', column: 'done', tag: 'research', source: 'chet', completedAt: '2026-02-14T15:17:00Z' },
+            { id: 'goal_engine_q1_q10', text: '✅ Goal Engine Q1-Q10 ALL COMPLETE — financial, pipeline, MIS, ADHD execution', column: 'done', tag: 'setup', source: 'chet', priority: 'high', completedAt: '2026-02-14T08:00:00Z' },
+            { id: 'review_queue', text: '📋 Review Queue System — Telegram inline buttons for Aviel\'s implementation reviews', column: 'chetActive', tag: 'infra', source: 'chet', priority: 'high' },
+            { id: 'aviel_dashboard', text: '📊 Aviel Personal Dashboard — gamified progress visualization', column: 'backlog', tag: 'setup', source: 'chet', priority: 'medium' },
+            { id: 'implementation_walkthrough', text: '🚶 Implementation Walk-Through — review all deliverables with Aviel one by one', column: 'chetActive', tag: 'setup', source: 'chet', priority: 'critical' },
         ];
-        // SYNC_TIMESTAMP: 2026-02-13T16:23:00Z
+        // SYNC_TIMESTAMP: 2026-02-14T16:30:12.484Z
         // ============================================================
 
         document.addEventListener('DOMContentLoaded', () => {
