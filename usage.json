@@ -1,15 +1,15 @@
 {
   "session": {
-    "pct": 29,
+    "pct": 32,
     "resetIn": 5,
     "note": "Calibrated from screenshot 11:29 PM   1.7%/exchange"
   },
   "weekly": {
-    "pct": 7,
+    "pct": 0,
     "resetAt": "Mon 1:00 PM",
     "note": "All models"
   },
-  "weeklyPct": 7,
+  "weeklyPct": 0,
   "model": {
     "active": "Opus 4.6 (PERMANENT DEFAULT)",
     "status": "ok",
@@ -22,6 +22,6 @@
     "low": 0,
     "note": "Today's exchanges by thinking level"
   },
-  "updatedAt": "2026-02-13T23:46:00-05:00",
+  "updatedAt": "2026-02-14T00:46:47-05:00",
   "updatedBy": "gauge-cron"
 }
