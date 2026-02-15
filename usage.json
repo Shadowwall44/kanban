@@ -1,12 +1,12 @@
 {
   "session": {
-    "pct": 3,
+    "pct": 3.5,
     "resetIn": 5,
-    "note": "Calibrated from screenshot 11:29 PM   1.7%/exchange"
+    "note": "16 exchanges this session"
   },
   "weekly": {
     "pct": 35,
-    "resetAt": "Mon 1:00 PM",
+    "resetAt": "Fri 12:00 AM",
     "note": "All models"
   },
   "weeklyPct": 35,
@@ -17,11 +17,11 @@
   },
   "thinking": {
     "current": "high",
-    "high": 34,
-    "medium": 2,
+    "high": 16,
+    "medium": 0,
     "low": 0,
     "note": "Today's exchanges by thinking level"
   },
-  "updatedAt": "2026-02-15T07:46:00-05:00",
+  "updatedAt": "2026-02-15T20:33:11.710Z",
   "updatedBy": "gauge-cron"
 }
